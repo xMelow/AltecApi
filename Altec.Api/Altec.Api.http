@@ -1,6 +1,4 @@
 @Altec.Api_HostAddress = http://localhost:5258
 
-GET {{Altec.Api_HostAddress}}/weatherforecast/
-Accept: application/json
 
 ###

@@ -11,6 +11,13 @@ public class TsplController : ControllerBase
     {
         return Ok("Ok! This is the tpsl endpoint");
     }
+
+    [HttpPost("preview")]
+    public IActionResult Preview([FromBody] TsplRequest request)
+    {
+        byte[] imageBytes = [];
+        return File(imageBytes, "image/png");
+    }
 }
 
 public record TsplRequest(string Code);
