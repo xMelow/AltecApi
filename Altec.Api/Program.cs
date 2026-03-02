@@ -1,8 +1,13 @@
+using Altec.Api.Interface;
+using Altec.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<ITsplService, TsplService>();
 
 var app = builder.Build();
 

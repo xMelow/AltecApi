@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Altec.Api.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Altec.Api.Controllers;
 
@@ -6,16 +7,23 @@ namespace Altec.Api.Controllers;
 [Route("tspl")]
 public class TsplController : ControllerBase
 {
+    private readonly ITsplService _tsplService;
+
+    public TsplController(ITsplService tsplService)
+    {
+        _tsplService = tsplService;
+    }
+    
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok("Ok! This is the tpsl endpoint");
+        return Ok("Ok! The TSPL endpoint works!");
     }
 
     [HttpPost("preview")]
     public IActionResult Preview([FromBody] TsplRequest request)
     {
-        byte[] imageBytes = [];
+        byte[] imageBytes = _tsplService.RenderPreview(request.Code);
         return File(imageBytes, "image/png");
     }
 }
