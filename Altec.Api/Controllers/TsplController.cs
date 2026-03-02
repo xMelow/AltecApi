@@ -1,4 +1,5 @@
 ﻿using Altec.Api.Interface;
+using Altec.Api.Records;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Altec.Api.Controllers;
@@ -27,5 +28,3 @@ public class TsplController : ControllerBase
         return File(imageBytes, "image/png");
     }
 }
-
-public record TsplRequest(string Code);
