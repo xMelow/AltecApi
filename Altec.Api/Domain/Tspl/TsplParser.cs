@@ -1,4 +1,5 @@
-﻿using Altec.Api.Records;
+﻿using System.Text.RegularExpressions;
+using Altec.Api.Records;
 
 namespace Altec.Api.Domain.Tspl;
 
@@ -9,9 +10,9 @@ public class TsplParser
         "SIZE", "BAR", "BOX", "TEXT", "BARCODE", "QRCODE", "CIRCLE", "PUTBMP"
     };
     
-    public IReadOnlyList<TsplCommand> Parse(string tspl)
+    public IReadOnlyList<TsplDrawCommand> Parse(string tspl)
     {
-        var result = new List<TsplCommand>();
+        var result = new List<TsplDrawCommand>();
         string[] lines = tspl.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
         
         foreach (var line in lines)
@@ -25,11 +26,41 @@ public class TsplParser
         return result;
     }
 
-    private TsplCommand ParseTsplLine(string line)
+    private TsplDrawCommand ParseTsplLine(string line)
     {
-        var name = line.Split(" ")[0];
-        string[] data = line.Split(" ")[1].Split(",");
+        int firstSpace = line.IndexOf(" ");
+        var name = line[..firstSpace];
+        
+        if (firstSpace == -1) return new TsplDrawCommand(name, new List<string>());
+        
+        return new TsplDrawCommand(name, ParseParameters(line[firstSpace..]));
+    }
 
-        return new TsplCommand(name, data);
+    private IReadOnlyList<string> ParseParameters(string arguments)
+    {
+        var result = new List<string>();
+        string currentParam = "";
+        bool inQuotes = false;
+
+        foreach (var character in arguments)
+        {
+            if (character == '\"')
+            {
+                inQuotes = !inQuotes;
+                continue;
+            }
+            
+            if (character == ',' && !inQuotes)
+            {
+                result.Add(currentParam);
+                currentParam = "";
+            }
+            else
+                currentParam += character;
+        }
+        if (!string.IsNullOrEmpty(currentParam)) 
+            result.Add(currentParam);
+        
+        return result;
     }
 }

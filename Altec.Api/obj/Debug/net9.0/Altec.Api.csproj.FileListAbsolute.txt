@@ -30,3 +30,4 @@ C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\refint\Altec.A
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\Altec.Api.pdb
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\Altec.Api.genruntimeconfig.cache
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\ref\Altec.Api.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\Altec.Api.sourcelink.json

@@ -24,7 +24,14 @@ public class TsplController : ControllerBase
     [HttpPost("preview")]
     public IActionResult Preview([FromBody] TsplRequest request)
     {
-        byte[] imageBytes = _tsplService.RenderPreview(request.Code);
+        byte[] imageBytes = _tsplService.RenderPreview(request.Tspl);
         return File(imageBytes, "image/png");
+    }
+
+    [HttpPost("parse")]
+    public IActionResult Parse([FromBody] TsplRequest request)
+    {
+        IReadOnlyList<TsplDrawCommand> commands = _tsplService.Parse(request.Tspl);
+        return Ok($"This is the list of commands: {commands}");
     }
 }
