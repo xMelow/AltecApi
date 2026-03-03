@@ -31,3 +31,11 @@ C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\Altec.Api.pdb
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\Altec.Api.genruntimeconfig.cache
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\ref\Altec.Api.dll
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\obj\Debug\net9.0\Altec.Api.sourcelink.json
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\SkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-arm64\native\libSkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-arm64\native\libSkiaSharp.pdb
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-x64\native\libSkiaSharp.pdb
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-x86\native\libSkiaSharp.pdb

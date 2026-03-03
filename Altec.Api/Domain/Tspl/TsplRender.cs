@@ -16,7 +16,10 @@ public class TsplRender
         var height = Mm2Pixels(int.Parse(sizeCommand.Arguments[1]));
         var bitmap = CreateBitMap(width, height, commands);
 
-        return bitmap.Bytes;
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+
+        return data.ToArray();
     }
 
     private int Mm2Pixels(int dots)

@@ -109,3 +109,11 @@ C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\obj\Debug\net9.0\refint\Al
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\obj\Debug\net9.0\Altec.Api.Test.pdb
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\obj\Debug\net9.0\Altec.Api.Test.genruntimeconfig.cache
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\obj\Debug\net9.0\ref\Altec.Api.Test.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\SkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\win-arm64\native\libSkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\win-arm64\native\libSkiaSharp.pdb
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\win-x64\native\libSkiaSharp.pdb
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api.Test\bin\Debug\net9.0\runtimes\win-x86\native\libSkiaSharp.pdb

@@ -4,5 +4,6 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1ab30405_002D3bd0_002D4e09_002Db4b4_002D1a684a47221c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Parse_TextCommand_ReturnsCorrectCommand" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::D614724C-395E-4538-AF2B-7D2F7F84D087::net9.0::Altec.Api.Test.Domain.Tspl.TsplParserTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::D614724C-395E-4538-AF2B-7D2F7F84D087::net9.0::Altec.Api.Test.Domain.Tspl.TsplRenderTest.Render_TextCommand_SavesToPng&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
