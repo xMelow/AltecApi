@@ -64,6 +64,7 @@ public class TsplParser
             else
                 currentParam += character;
         }
+        
         if (!string.IsNullOrEmpty(currentParam)) 
             result.Add(currentParam.Trim());
         
