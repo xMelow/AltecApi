@@ -31,7 +31,7 @@ public class TsplController : ControllerBase
     [HttpPost("parse")]
     public IActionResult Parse([FromBody] TsplRequest request)
     {
-        IReadOnlyList<TsplDrawCommand> commands = _tsplService.Parse(request.Tspl);
-        return Ok($"This is the list of commands: {commands}");
+        var commands = _tsplService.Parse(request.Tspl);
+        return Ok(new TsplParseResponse(commands));
     }
 }

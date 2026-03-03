@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altec.Api", "Altec.Api\Altec.Api.csproj", "{0A6C005E-391D-4AB0-B426-64E5672C697C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altec.Api.Test", "Altec.Api.Test\Altec.Api.Test.csproj", "{D614724C-395E-4538-AF2B-7D2F7F84D087}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0A6C005E-391D-4AB0-B426-64E5672C697C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A6C005E-391D-4AB0-B426-64E5672C697C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A6C005E-391D-4AB0-B426-64E5672C697C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D614724C-395E-4538-AF2B-7D2F7F84D087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D614724C-395E-4538-AF2B-7D2F7F84D087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D614724C-395E-4538-AF2B-7D2F7F84D087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D614724C-395E-4538-AF2B-7D2F7F84D087}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
