@@ -33,7 +33,7 @@ public class TsplParser
         
         if (firstSpace == -1) return new TsplDrawCommand(name, new List<string>());
         
-        return new TsplDrawCommand(name, ParseParameters(line[firstSpace..]));
+        return new TsplDrawCommand(name, ParseParameters(line[firstSpace..].Trim()));
     }
 
     private IReadOnlyList<string> ParseParameters(string arguments)
@@ -52,14 +52,14 @@ public class TsplParser
             
             if (character == ',' && !inQuotes)
             {
-                result.Add(currentParam);
+                result.Add(currentParam.Trim());
                 currentParam = "";
             }
             else
                 currentParam += character;
         }
         if (!string.IsNullOrEmpty(currentParam)) 
-            result.Add(currentParam);
+            result.Add(currentParam.Trim());
         
         return result;
     }
