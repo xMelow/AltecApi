@@ -52,6 +52,7 @@ public class TsplParser
             
             if (character == ',' && !inQuotes)
             {
+                currentParam = RemoveMetrics(currentParam);
                 result.Add(currentParam.Trim());
                 currentParam = "";
             }
@@ -59,8 +60,13 @@ public class TsplParser
                 currentParam += character;
         }
         if (!string.IsNullOrEmpty(currentParam)) 
-            result.Add(currentParam.Trim());
+            result.Add(RemoveMetrics(currentParam).Trim());
         
         return result;
+    }
+
+    private string RemoveMetrics(string parameter)
+    {
+        return parameter.Replace(" mm", "").Trim();
     }
 }
