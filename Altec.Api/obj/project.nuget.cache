@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "eg7F/ceOe7A=",
+  "dgSpecHash": "j9eWxjKSYR0=",
   "success": true,
   "projectFilePath": "C:\\Users\\Flor\\Documents\\Code\\Altec.Api\\Altec.Api\\Altec.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Flor\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.9\\microsoft.aspnetcore.openapi.9.0.9.nupkg.sha512",
-    "C:\\Users\\Flor\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+    "C:\\Users\\Flor\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\skiasharp\\3.119.3-preview.1.1\\skiasharp.3.119.3-preview.1.1.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\skiasharp.nativeassets.macos\\3.119.3-preview.1.1\\skiasharp.nativeassets.macos.3.119.3-preview.1.1.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\skiasharp.nativeassets.win32\\3.119.3-preview.1.1\\skiasharp.nativeassets.win32.3.119.3-preview.1.1.nupkg.sha512"
   ],
   "logs": []
 }

@@ -7,7 +7,7 @@ public class TsplParser
 {
     private IReadOnlyList<string> commandsToParse = new[]
     {
-        "SIZE", "BAR", "BOX", "TEXT", "BARCODE", "QRCODE", "CIRCLE", "PUTBMP"
+        "SIZE", "BAR", "BOX", "TEXT", "BARCODE", "QRCODE", "CIRCLE", "PUTBMP", "BLOCK"
     };
     
     public IReadOnlyList<TsplDrawCommand> Parse(string tspl)
