@@ -7,7 +7,6 @@ public class TsplRender
 {
     private const int Dpi = 300;
     
-    
     public byte[] Render(IReadOnlyList<TsplDrawCommand> commands)
     {
         var sizeCommand = commands.FirstOrDefault(command => command.Name == "SIZE")
@@ -64,10 +63,33 @@ public class TsplRender
 
         return bitmap;
     }
+
+    private int Dots2Pixels(int dots)
+    {
+        // screen dpi = 96.0
+        // dpi = printer dpi = 300
+        return Convert.ToInt32(dots * (Dpi / 96.0));
+    }
     
     private void DrawTextCommand(TsplDrawCommand command, SKCanvas canvas)
     {
-        throw new NotImplementedException();
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var text = command.Arguments[6];
+        var fontSize = int.Parse(command.Arguments[4]) * (Dpi / 203.0f);
+
+        using var paint = new SKPaint
+        {
+            Color = SKColors.Black,
+            IsAntialias = true
+        };
+
+        using var font = new SKFont
+        {
+            Size = fontSize
+        };
+        
+        canvas.DrawText(text, x, y, font, paint);
     }
 
     private void DrawBlockCommand(TsplDrawCommand command)
