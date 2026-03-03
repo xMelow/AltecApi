@@ -38,6 +38,12 @@ public class TsplParser
 
     private IReadOnlyList<string> ParseParameters(string arguments)
     {
+        var tokens = Tokenize(arguments);
+        return tokens.Select(RemoveMetrics).ToList();
+    }
+
+    private List<string> Tokenize(string arguments)
+    {
         var result = new List<string>();
         string currentParam = "";
         bool inQuotes = false;
@@ -52,7 +58,6 @@ public class TsplParser
             
             if (character == ',' && !inQuotes)
             {
-                currentParam = RemoveMetrics(currentParam);
                 result.Add(currentParam.Trim());
                 currentParam = "";
             }
@@ -60,7 +65,7 @@ public class TsplParser
                 currentParam += character;
         }
         if (!string.IsNullOrEmpty(currentParam)) 
-            result.Add(RemoveMetrics(currentParam).Trim());
+            result.Add(currentParam.Trim());
         
         return result;
     }
