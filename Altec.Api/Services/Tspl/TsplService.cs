@@ -12,7 +12,7 @@ public class TsplService : ITsplService
     public byte[] RenderPreview(string tspl)
     {
         var tsplCommands = _tsplParser.Parse(tspl);
-        // var labelPreview = _tsplRender.Render(tsplCommands);
+        var labelPreview = _tsplRender.Render(tsplCommands);
         
         throw new NotImplementedException();
     }
