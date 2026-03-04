@@ -43,7 +43,7 @@ public class TsplRender
                     DrawTextCommand(command, canvas);
                     break;
                 case "BAR":
-                    DrawBarCommand(command);
+                    DrawBarCommand(command, canvas);
                     break;
                 case "BOX":
                     DrawBoxCommand(command);
@@ -69,9 +69,9 @@ public class TsplRender
         return bitmap;
     }
 
-    private double Dots2Pixels(int dots)
+    private float Dots2Pixels(int dots)
     {
-        return dots * (ScreenDpi / PrinterDpi);
+        return Convert.ToSingle(dots * (ScreenDpi / PrinterDpi));
     }
     
     private void DrawTextCommand(TsplDrawCommand command, SKCanvas canvas)
@@ -98,7 +98,22 @@ public class TsplRender
         paint.MeasureText(text, ref textBounds);
         var yBaseline = y + textBounds.Height;
         
-        canvas.DrawText(text, (float) x, (float) yBaseline, font, paint);
+        canvas.DrawText(text, x, yBaseline, font, paint);
+    }
+    
+    private void DrawBarCommand(TsplDrawCommand command, SKCanvas canvas)
+    {
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var width = Dots2Pixels(int.Parse(command.Arguments[2]));
+        var height = Dots2Pixels(int.Parse(command.Arguments[3]));
+
+        using var paint = new SKPaint
+        {
+            Color = SKColors.Black,
+            Style = SKPaintStyle.Fill
+        };
+        canvas.DrawRect(x, y, width, height, paint);
     }
 
     private void DrawBlockCommand(TsplDrawCommand command)
@@ -131,8 +146,5 @@ public class TsplRender
         //todo: implement function
     }
 
-    private void DrawBarCommand(TsplDrawCommand command)
-    {
-        //todo: implement function
-    }
+
 }
