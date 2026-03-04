@@ -129,7 +129,8 @@ public class TsplRender
         using var paint = new SKPaint
         {
             Color = SKColors.Black,
-            Style = SKPaintStyle.Stroke
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = Dots2Pixels(int.Parse(command.Arguments[4]))
         };
         
         canvas.DrawRect(x, y, width, height, paint);
