@@ -91,7 +91,7 @@ public class TsplRender
 
         using var font = new SKFont
         {
-            Size = (float) fontSize
+            Size = fontSize
         };
         
         var textBounds = new SKRect();
@@ -113,6 +113,7 @@ public class TsplRender
             Color = SKColors.Black,
             Style = SKPaintStyle.Fill
         };
+        
         canvas.DrawRect(x, y, width, height, paint);
     }
 
