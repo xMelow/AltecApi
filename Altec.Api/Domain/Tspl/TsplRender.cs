@@ -46,22 +46,22 @@ public class TsplRender
                     DrawBarCommand(command, canvas);
                     break;
                 case "BOX":
-                    DrawBoxCommand(command);
+                    DrawBoxCommand(command, canvas);
                     break;
                 case "CIRCLE":
-                    DrawCircleCommand(command);
+                    DrawCircleCommand(command, canvas);
                     break;
                 case "BARCODE":
-                    DrawBarcodeCommand(command);
+                    DrawBarcodeCommand(command, canvas);
                     break;
                 case "QRCODE":
-                    DrawQrcodeCommand(command);
+                    DrawQrcodeCommand(command, canvas);
                     break;
                 case "PUTBMP":
-                    DrawBmpCommand(command);
+                    DrawBmpCommand(command, canvas);
                     break;
                 case "BLOCK":
-                    DrawBlockCommand(command);
+                    DrawBlockCommand(command, canvas);
                     break;
             }
         }
@@ -116,36 +116,47 @@ public class TsplRender
         
         canvas.DrawRect(x, y, width, height, paint);
     }
+    
+    private void DrawBoxCommand(TsplDrawCommand command, SKCanvas canvas)
+    {
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var xEnd = Dots2Pixels(int.Parse(command.Arguments[2]));
+        var yEnd = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var width = xEnd - x;
+        var height = yEnd - y;
 
-    private void DrawBlockCommand(TsplDrawCommand command)
+        using var paint = new SKPaint
+        {
+            Color = SKColors.Black,
+            Style = SKPaintStyle.Stroke
+        };
+        
+        canvas.DrawRect(x, y, width, height, paint);
+    }
+
+    private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }
 
-    private void DrawBmpCommand(TsplDrawCommand command)
+    private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }
 
-    private void DrawQrcodeCommand(TsplDrawCommand command)
+    private void DrawQrcodeCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }
 
-    private void DrawBarcodeCommand(TsplDrawCommand command)
+    private void DrawBarcodeCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }
 
-    private void DrawCircleCommand(TsplDrawCommand command)
+    private void DrawCircleCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }
-
-    private void DrawBoxCommand(TsplDrawCommand command)
-    {
-        //todo: implement function
-    }
-
-
 }
