@@ -135,6 +135,22 @@ public class TsplRender
         
         canvas.DrawRect(x, y, width, height, paint);
     }
+    
+    private void DrawCircleCommand(TsplDrawCommand command, SKCanvas canvas)
+    {
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var diameter = Dots2Pixels(int.Parse(command.Arguments[2]));
+
+        using var paint = new SKPaint
+        {
+            Color = SKColors.Black,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = Dots2Pixels(int.Parse(command.Arguments[3]))
+        };
+        
+        canvas.DrawCircle(x, y, diameter / 2, paint);
+    }
 
     private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas)
     {
@@ -152,11 +168,6 @@ public class TsplRender
     }
 
     private void DrawBarcodeCommand(TsplDrawCommand command, SKCanvas canvas)
-    {
-        //todo: implement function
-    }
-
-    private void DrawCircleCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }
