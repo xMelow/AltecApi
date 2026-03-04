@@ -119,7 +119,20 @@ public class TsplRender
     
     private void DrawBoxCommand(TsplDrawCommand command, SKCanvas canvas)
     {
-        //todo: implement function
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var xEnd = Dots2Pixels(int.Parse(command.Arguments[2]));
+        var yEnd = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var width = xEnd - x;
+        var height = yEnd - y;
+
+        using var paint = new SKPaint
+        {
+            Color = SKColors.Black,
+            Style = SKPaintStyle.Stroke
+        };
+        
+        canvas.DrawRect(x, y, width, height, paint);
     }
 
     private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas)
