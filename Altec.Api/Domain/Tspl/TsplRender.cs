@@ -5,7 +5,8 @@ namespace Altec.Api.Domain.Tspl;
 
 public class TsplRender
 {
-    private const int Dpi = 300;
+    private const double PrinterDpi = 300.0;
+    private const double ScreenDpi = 96.0;
     
     public byte[] Render(IReadOnlyList<TsplDrawCommand> commands)
     {
@@ -22,9 +23,10 @@ public class TsplRender
         return data.ToArray();
     }
 
-    private int Mm2Pixels(int dots)
+    private int Mm2Pixels(int mm)
     {
-        return Convert.ToInt32(Math.Round((dots / 25.4) * Dpi));
+        var dots = (mm / 25.4) * PrinterDpi;
+        return Convert.ToInt32(Dots2Pixels((int) dots));
     }
     
     private SKBitmap CreateBitMap(int width, int height, IReadOnlyList<TsplDrawCommand> commands)
@@ -67,19 +69,19 @@ public class TsplRender
         return bitmap;
     }
 
-    private int Dots2Pixels(int dots)
+    private double Dots2Pixels(int dots)
     {
-        // screen dpi = 96.0
-        // dpi = printer dpi = 300
-        return Convert.ToInt32(dots * (Dpi / 96.0));
+        return dots * (ScreenDpi / PrinterDpi);
     }
     
     private void DrawTextCommand(TsplDrawCommand command, SKCanvas canvas)
-    {
+    {        
+        const double baseDotHeight = 3.6;
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
         var text = command.Arguments[6];
-        var fontSize = int.Parse(command.Arguments[4]) * (Dpi / 203.0f);
+        var yScale = int.Parse(command.Arguments[5]);
+        var fontSize = Dots2Pixels((int)(baseDotHeight * yScale));
 
         using var paint = new SKPaint
         {
@@ -89,44 +91,48 @@ public class TsplRender
 
         using var font = new SKFont
         {
-            Size = fontSize
+            Size = (float) fontSize
         };
         
-        canvas.DrawText(text, x, y, font, paint);
+        var textBounds = new SKRect();
+        paint.MeasureText(text, ref textBounds);
+        var yBaseline = y + textBounds.Height;
+        
+        canvas.DrawText(text, (float) x, (float) yBaseline, font, paint);
     }
 
     private void DrawBlockCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 
     private void DrawBmpCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 
     private void DrawQrcodeCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 
     private void DrawBarcodeCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 
     private void DrawCircleCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 
     private void DrawBoxCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 
     private void DrawBarCommand(TsplDrawCommand command)
     {
-        throw new NotImplementedException();
+        //todo: implement function
     }
 }
