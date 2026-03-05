@@ -1,4 +1,5 @@
-﻿using Altec.Api.Records;
+﻿using System.Runtime.CompilerServices;
+using Altec.Api.Records;
 using SkiaSharp;
 
 namespace Altec.Api.Domain.Tspl;
@@ -157,22 +158,37 @@ public class TsplRender
 
     private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas, bool showBlockOutline)
     {
-        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
-        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
-        var blockWidth = Dots2Pixels(int.Parse(command.Arguments[2]));
-        var blockHeight = Dots2Pixels(int.Parse(command.Arguments[3]));
-        var yScale = int.Parse(command.Arguments[7]);
-        var align = command.Arguments.Count >= 11
-            ? int.Parse(command.Arguments[9])
-            : 0;
-        var text = command.Arguments[^1];
-    
-        const double baseDotHeight = 3.6;
-        var fontSize = Dots2Pixels((int)(baseDotHeight * yScale));
+        var (x, y, width, height, fontSize, align, text) = ParseBlockArguments(command);
     
         using var paint = new SKPaint { Color = SKColors.Black, IsAntialias = true };
         using var font = new SKFont { Size = fontSize };
+        
+        DrawWrappedText(canvas, font, paint, text, x, y, width, fontSize, align);
+        
+        if (showBlockOutline)
+            DrawBlockOutline(canvas, x, y, width, height);
+    }
 
+    private (float x, float y, float width, float height, float fontSize, int algin, string text) ParseBlockArguments(TsplDrawCommand command)
+    {
+        const double baseDotHeight = 3.6;
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var width = Dots2Pixels(int.Parse(command.Arguments[2]));
+        var height = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var yScale = int.Parse(command.Arguments[7]);
+        var text = command.Arguments[^1];
+        var fontSize = Dots2Pixels((int)(baseDotHeight * yScale));
+        var align = command.Arguments.Count >= 11
+            ? int.Parse(command.Arguments[9])
+            : 0;
+        
+        return (x, y, width, height, fontSize, align, text);
+    } 
+
+    private void DrawWrappedText(SKCanvas canvas, SKFont font, SKPaint paint, string text, float x, float y,
+        float blockWidth, float fontSize, int align)
+    {
         var currentLine = "";
         var textBounds = new SKRect();
         paint.MeasureText(text, ref textBounds);
@@ -199,17 +215,17 @@ public class TsplRender
                 : x;
             canvas.DrawText(currentLine, drawX, yCursor, font, paint);
         }
+    }
 
-        if (showBlockOutline)
+    private void DrawBlockOutline(SKCanvas canvas, float x, float y, float blockWidth, float blockHeight)
+    {
+        using var outlinePaint = new SKPaint
         {
-            using var outlinePaint = new SKPaint
-            {
-                Color = SKColors.Red,
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 1
-            };
-            canvas.DrawRect(x, y, blockWidth, blockHeight, outlinePaint);
-        }
+            Color = SKColors.Red,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 1
+        };
+        canvas.DrawRect(x, y, blockWidth, blockHeight, outlinePaint);
     }
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
