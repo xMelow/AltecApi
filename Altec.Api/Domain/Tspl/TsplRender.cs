@@ -171,7 +171,10 @@ public class TsplRender
         using var font = new SKFont { Size = fontSize };
 
         var currentLine = "";
-        var yCursor = y;
+        
+        var textBounds = new SKRect();
+        paint.MeasureText(text, ref textBounds);
+        var yCursor = y + textBounds.Height;
         
         foreach (var word in text.Split(" "))
         {
@@ -179,15 +182,11 @@ public class TsplRender
                 currentLine += word + " ";
             else
             {
-                // draw the line 
                 canvas.DrawText(currentLine, x, yCursor, font, paint);
-                // move y down by fontSize
-                yCursor += fontSize;
-                // start new current line with word
+                yCursor += fontSize * 1.2f;
                 currentLine = word;
             }
         }
-        // draw the last text
         if (!string.IsNullOrEmpty(currentLine)) 
             canvas.DrawText(currentLine, x, yCursor, font, paint);
     }
