@@ -162,6 +162,9 @@ public class TsplRender
         var blockWidth = Dots2Pixels(int.Parse(command.Arguments[2]));
         var blockHeight = Dots2Pixels(int.Parse(command.Arguments[3]));
         var yScale = int.Parse(command.Arguments[7]);
+        var align = command.Arguments.Count >= 11
+            ? int.Parse(command.Arguments[9])
+            : 0;
         var text = command.Arguments[^1];
     
         const double baseDotHeight = 3.6;
@@ -171,7 +174,6 @@ public class TsplRender
         using var font = new SKFont { Size = fontSize };
 
         var currentLine = "";
-        
         var textBounds = new SKRect();
         paint.MeasureText(text, ref textBounds);
         var yCursor = y + textBounds.Height;
@@ -182,13 +184,22 @@ public class TsplRender
                 currentLine += word + " ";
             else
             {
-                canvas.DrawText(currentLine, x, yCursor, font, paint);
+                var drawX = align == 2
+                    ? x + (blockWidth - font.MeasureText(currentLine)) / 2
+                    : x;
+                canvas.DrawText(currentLine, drawX, yCursor, font, paint);
                 yCursor += fontSize * 1.2f;
                 currentLine = word;
             }
         }
-        if (!string.IsNullOrEmpty(currentLine)) 
-            canvas.DrawText(currentLine, x, yCursor, font, paint);
+        if (!string.IsNullOrEmpty(currentLine))
+        {
+            var drawX = align == 2
+                ? x + (blockWidth - font.MeasureText(currentLine)) / 2
+                : x;
+            canvas.DrawText(currentLine, drawX, yCursor, font, paint);
+        }
+            
     }
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
