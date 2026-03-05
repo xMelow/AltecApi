@@ -141,6 +141,9 @@ public class TsplRender
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
         var diameter = Dots2Pixels(int.Parse(command.Arguments[2]));
+        var radius = diameter / 2;
+        var centerX = x + radius;
+        var centerY = y + radius;
 
         using var paint = new SKPaint
         {
@@ -149,7 +152,7 @@ public class TsplRender
             StrokeWidth = Dots2Pixels(int.Parse(command.Arguments[3]))
         };
         
-        canvas.DrawCircle(x, y, diameter / 2, paint);
+        canvas.DrawCircle(centerX, centerY, diameter / 2, paint);
     }
 
     private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas)
