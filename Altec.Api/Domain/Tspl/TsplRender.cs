@@ -157,9 +157,36 @@ public class TsplRender
 
     private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas)
     {
-        //todo: implement function
-    }
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var blockWidth = Dots2Pixels(int.Parse(command.Arguments[2]));
+        var blockHeight = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var yScale = int.Parse(command.Arguments[7]);
+        var text = command.Arguments[^1];
+    
+        const double baseDotHeight = 3.6;
+        var fontSize = Dots2Pixels((int)(baseDotHeight * yScale));
+    
+        using var paint = new SKPaint { Color = SKColors.Black, IsAntialias = true };
+        using var font = new SKFont { Size = fontSize };
 
+        var currentLine = "";
+        foreach (var word in text.Split(" "))
+        {
+            if (font.MeasureText(currentLine + word) != blockWidth)
+            {
+                // add word to current line
+            }
+            else
+            {
+                // draw the line 
+                // move y down by fontSize
+                // start new current line
+            }
+            // draw the last line
+        }
+    }
+    
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
