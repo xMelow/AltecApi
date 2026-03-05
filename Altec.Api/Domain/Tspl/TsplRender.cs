@@ -171,20 +171,25 @@ public class TsplRender
         using var font = new SKFont { Size = fontSize };
 
         var currentLine = "";
+        var yCursor = y;
+        
         foreach (var word in text.Split(" "))
         {
-            if (font.MeasureText(currentLine + word) != blockWidth)
-            {
-                // add word to current line
-            }
+            if (font.MeasureText(currentLine + word) <= blockWidth)
+                currentLine += word + " ";
             else
             {
                 // draw the line 
+                canvas.DrawText(currentLine, x, yCursor, font, paint);
                 // move y down by fontSize
-                // start new current line
+                yCursor += fontSize;
+                // start new current line with word
+                currentLine = word;
             }
-            // draw the last line
         }
+        // draw the last text
+        if (!string.IsNullOrEmpty(currentLine)) 
+            canvas.DrawText(currentLine, x, yCursor, font, paint);
     }
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
