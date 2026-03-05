@@ -34,7 +34,7 @@ public class TsplRenderTest
     {
         var commands = new List<TsplDrawCommand>
         {
-            new("SIZE", new List<string> { "101", "101" }),
+            new("SIZE", new List<string> { "103", "103" }),
             new("TEXT", new List<string> { "427", "47", "0", "0", "16", "16", "Hello World" }),
             new("BAR", new List<string> { "33", "135", "1199", "7" }),
             new("BOX", new List<string> { "33", "178", "1232", "890", "6" }),
