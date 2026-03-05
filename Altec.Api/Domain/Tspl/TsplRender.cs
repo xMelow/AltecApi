@@ -8,14 +8,14 @@ public class TsplRender
     private const double PrinterDpi = 300.0;
     private const double ScreenDpi = 96.0;
     
-    public byte[] Render(IReadOnlyList<TsplDrawCommand> commands)
+    public byte[] Render(IReadOnlyList<TsplDrawCommand> commands, bool showBlockOutline)
     {
         var sizeCommand = commands.FirstOrDefault(command => command.Name == "SIZE")
             ?? throw new InvalidOperationException("SIZE command is required");
         
         var width = Mm2Pixels(int.Parse(sizeCommand.Arguments[0]));
         var height = Mm2Pixels(int.Parse(sizeCommand.Arguments[1]));
-        var bitmap = CreateBitMap(width, height, commands);
+        var bitmap = CreateBitMap(width, height, commands, showBlockOutline);
 
         using var image = SKImage.FromBitmap(bitmap);
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
@@ -29,7 +29,7 @@ public class TsplRender
         return Convert.ToInt32(Dots2Pixels((int) dots));
     }
     
-    private SKBitmap CreateBitMap(int width, int height, IReadOnlyList<TsplDrawCommand> commands)
+    private SKBitmap CreateBitMap(int width, int height, IReadOnlyList<TsplDrawCommand> commands, bool showBlockOutline)
     {
         SKBitmap bitmap = new SKBitmap(width, height);
         using var canvas = new SKCanvas(bitmap);
@@ -61,7 +61,7 @@ public class TsplRender
                     DrawBmpCommand(command, canvas);
                     break;
                 case "BLOCK":
-                    DrawBlockCommand(command, canvas);
+                    DrawBlockCommand(command, canvas, showBlockOutline);
                     break;
             }
         }
@@ -155,7 +155,7 @@ public class TsplRender
         canvas.DrawCircle(centerX, centerY, diameter / 2, paint);
     }
 
-    private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas)
+    private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas, bool showBlockOutline)
     {
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
@@ -199,7 +199,17 @@ public class TsplRender
                 : x;
             canvas.DrawText(currentLine, drawX, yCursor, font, paint);
         }
-            
+
+        if (showBlockOutline)
+        {
+            using var outlinePaint = new SKPaint
+            {
+                Color = SKColors.Red,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 1
+            };
+            canvas.DrawRect(x, y, blockWidth, blockHeight, outlinePaint);
+        }
     }
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
