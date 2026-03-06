@@ -7,5 +7,6 @@
     &lt;TestId&gt;xUnit::D614724C-395E-4538-AF2B-7D2F7F84D087::net9.0::Altec.Api.Test.Domain.Tspl.TsplRenderTest.Render_TextCommand_SavesToPng&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D614724C-395E-4538-AF2B-7D2F7F84D087::net9.0::Altec.Api.Test.Domain.Tspl.TsplRenderTest.Render_FullTsplLabel_SavesToPng&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D614724C-395E-4538-AF2B-7D2F7F84D087::net9.0::Altec.Api.Test.Domain.Tspl.TsplRenderTest.Render_FullComplicatedTsplLabel_SavesToPng&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::D614724C-395E-4538-AF2B-7D2F7F84D087::net9.0::Altec.Api.Test.Domain.Tspl.TsplRenderTest.Render_Label3&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
