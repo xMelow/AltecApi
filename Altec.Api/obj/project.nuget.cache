@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "j9eWxjKSYR0=",
+  "dgSpecHash": "YVQGEGrb5xY=",
   "success": true,
   "projectFilePath": "C:\\Users\\Flor\\Documents\\Code\\Altec.Api\\Altec.Api\\Altec.Api.csproj",
   "expectedPackageFiles": [
@@ -8,7 +8,9 @@
     "C:\\Users\\Flor\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
     "C:\\Users\\Flor\\.nuget\\packages\\skiasharp\\3.119.3-preview.1.1\\skiasharp.3.119.3-preview.1.1.nupkg.sha512",
     "C:\\Users\\Flor\\.nuget\\packages\\skiasharp.nativeassets.macos\\3.119.3-preview.1.1\\skiasharp.nativeassets.macos.3.119.3-preview.1.1.nupkg.sha512",
-    "C:\\Users\\Flor\\.nuget\\packages\\skiasharp.nativeassets.win32\\3.119.3-preview.1.1\\skiasharp.nativeassets.win32.3.119.3-preview.1.1.nupkg.sha512"
+    "C:\\Users\\Flor\\.nuget\\packages\\skiasharp.nativeassets.win32\\3.119.3-preview.1.1\\skiasharp.nativeassets.win32.3.119.3-preview.1.1.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\zxing.net\\0.16.11\\zxing.net.0.16.11.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\zxing.net.bindings.skiasharp\\0.16.22\\zxing.net.bindings.skiasharp.0.16.22.nupkg.sha512"
   ],
   "logs": []
 }

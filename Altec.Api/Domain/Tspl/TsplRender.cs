@@ -227,12 +227,12 @@ public class TsplRender
         canvas.DrawRect(x, y, blockWidth, blockHeight, outlinePaint);
     }
     
-    private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
-    {
-        //todo: implement function
-    }
-
     private void DrawQrcodeCommand(TsplDrawCommand command, SKCanvas canvas)
+    {
+        
+    }
+    
+    private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
     {
         //todo: implement function
     }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "K5AaWad2JeI=",
+  "dgSpecHash": "xYBKCOOCJXE=",
   "success": true,
   "projectFilePath": "C:\\Users\\Flor\\Documents\\Code\\Altec.Api\\Altec.Api.Test\\Altec.Api.Test.csproj",
   "expectedPackageFiles": [
@@ -23,7 +23,9 @@
     "C:\\Users\\Flor\\.nuget\\packages\\xunit.core\\2.9.2\\xunit.core.2.9.2.nupkg.sha512",
     "C:\\Users\\Flor\\.nuget\\packages\\xunit.extensibility.core\\2.9.2\\xunit.extensibility.core.2.9.2.nupkg.sha512",
     "C:\\Users\\Flor\\.nuget\\packages\\xunit.extensibility.execution\\2.9.2\\xunit.extensibility.execution.2.9.2.nupkg.sha512",
-    "C:\\Users\\Flor\\.nuget\\packages\\xunit.runner.visualstudio\\2.8.2\\xunit.runner.visualstudio.2.8.2.nupkg.sha512"
+    "C:\\Users\\Flor\\.nuget\\packages\\xunit.runner.visualstudio\\2.8.2\\xunit.runner.visualstudio.2.8.2.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\zxing.net\\0.16.11\\zxing.net.0.16.11.nupkg.sha512",
+    "C:\\Users\\Flor\\.nuget\\packages\\zxing.net.bindings.skiasharp\\0.16.22\\zxing.net.bindings.skiasharp.0.16.22.nupkg.sha512"
   ],
   "logs": []
 }
