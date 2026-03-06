@@ -255,13 +255,42 @@ public class TsplRender
         canvas.DrawBitmap(qrBitmap, x, y);
     }
     
-    private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
-    {
-        //todo: implement function
-    }
-
     private void DrawBarcodeCommand(TsplDrawCommand command, SKCanvas canvas)
     {
-        //todo: implement function
+        var x = Dots2Pixels(int.Parse(command.Arguments[0]));
+        var y = Dots2Pixels(int.Parse(command.Arguments[1]));
+        var height = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var narrow = Dots2Pixels(int.Parse(command.Arguments[6]));
+        var wide = Dots2Pixels(int.Parse(command.Arguments[7]));
+        var width = narrow * 100;
+        var content = command.Arguments[^1];
+        var barcodeType = command.Arguments[2];
+        var barcodeFormat = barcodeType switch
+        {
+            "128" => BarcodeFormat.CODE_128,
+            "39" => BarcodeFormat.CODE_39,
+            "EAN13" => BarcodeFormat.EAN_13,
+            "EAN8" => BarcodeFormat.EAN_8,
+            _ => BarcodeFormat.CODE_128
+        };
+        
+        var writer = new BarcodeWriter<SKBitmap>
+        {
+            Format = barcodeFormat,
+            Options = new EncodingOptions
+            {
+                Width = (int)width,
+                Height = (int)height,
+                Margin = 1,
+            },
+            Renderer = new SKBitmapRenderer()
+        };
+        var barcodeBitMap = writer.Write(content);
+        canvas.DrawBitmap(barcodeBitMap, x, y);
+    }
+    
+    private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
+    {
+        //Todo: implement function
     }
 }
