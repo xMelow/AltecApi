@@ -1,6 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
 using Altec.Api.Records;
 using SkiaSharp;
+using ZXing;
+using ZXing.Common;
+using ZXing.SkiaSharp;
+using ZXing.SkiaSharp.Rendering;
 
 namespace Altec.Api.Domain.Tspl;
 
@@ -229,15 +233,26 @@ public class TsplRender
     
     private void DrawQrcodeCommand(TsplDrawCommand command, SKCanvas canvas)
     {
-        // calculate position
+        const int qrGridCells = 25;
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
-        // create bitmap qrcode
-        ZXing barcode = new ZXing();
-        // draw qr bitmap on the canvas
-        using var paint = new SKPaint { };
-        
-        canvas.DrawBitmap(barcode, x, y, paint);
+        var content = command.Arguments[^1];
+        var cellWidth = int.Parse(command.Arguments[3]);
+        var size = Dots2Pixels(cellWidth * qrGridCells);
+
+        var writer = new BarcodeWriter<SKBitmap>
+        {
+            Format = BarcodeFormat.QR_CODE,
+            Options = new EncodingOptions
+            {
+                Width = (int)size,
+                Height = (int)size,
+                Margin = 1
+            },
+            Renderer = new SKBitmapRenderer()
+        };
+        var qrBitmap = writer.Write(content);
+        canvas.DrawBitmap(qrBitmap, x, y);
     }
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas)
