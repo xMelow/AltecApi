@@ -144,6 +144,14 @@
             "SkiaSharp": {
               "target": "Package",
               "version": "[3.119.3-preview.1.1, )"
+            },
+            "ZXing.Net": {
+              "target": "Package",
+              "version": "[0.16.11, )"
+            },
+            "ZXing.Net.Bindings.SkiaSharp": {
+              "target": "Package",
+              "version": "[0.16.22, )"
             }
           },
           "imports": [

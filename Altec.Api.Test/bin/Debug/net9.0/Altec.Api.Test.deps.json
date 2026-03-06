@@ -415,10 +415,32 @@
         }
       },
       "xunit.runner.visualstudio/2.8.2": {},
+      "ZXing.Net/0.16.11": {
+        "runtime": {
+          "lib/net9.0/zxing.dll": {
+            "assemblyVersion": "0.16.11.0",
+            "fileVersion": "0.16.11.0"
+          }
+        }
+      },
+      "ZXing.Net.Bindings.SkiaSharp/0.16.22": {
+        "dependencies": {
+          "SkiaSharp": "3.119.3-preview.1.1",
+          "ZXing.Net": "0.16.11"
+        },
+        "runtime": {
+          "lib/net8.0/ZXing.SkiaSharp.dll": {
+            "assemblyVersion": "0.16.22.0",
+            "fileVersion": "0.16.22.0"
+          }
+        }
+      },
       "Altec.Api/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": "9.0.9",
-          "SkiaSharp": "3.119.3-preview.1.1"
+          "SkiaSharp": "3.119.3-preview.1.1",
+          "ZXing.Net": "0.16.11",
+          "ZXing.Net.Bindings.SkiaSharp": "0.16.22"
         },
         "runtime": {
           "Altec.Api.dll": {
@@ -574,6 +596,20 @@
       "sha512": "sha512-vm1tbfXhFmjFMUmS4M0J0ASXz3/U5XvXBa6DOQUL3fEz4Vt6YPhv+ESCarx6M6D+9kJkJYZKCNvJMas1+nVfmQ==",
       "path": "xunit.runner.visualstudio/2.8.2",
       "hashPath": "xunit.runner.visualstudio.2.8.2.nupkg.sha512"
+    },
+    "ZXing.Net/0.16.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OZfAVu88hl87BffQ+rlWCj/vLvAhhCK4QnFaoveeF/MY8SjHNSYBQ3qyUEWlPKNgBQGh1syXhCDg10vUnCsqkg==",
+      "path": "zxing.net/0.16.11",
+      "hashPath": "zxing.net.0.16.11.nupkg.sha512"
+    },
+    "ZXing.Net.Bindings.SkiaSharp/0.16.22": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jdlarXJKukpYjnNf6bS7/ncRSZQh7v4uwUMFsaIc3MPZtY+fcQS0ONGXI4BSEEcNhxb8UfrULtRuL9ToLPhn1g==",
+      "path": "zxing.net.bindings.skiasharp/0.16.22",
+      "hashPath": "zxing.net.bindings.skiasharp.0.16.22.nupkg.sha512"
     },
     "Altec.Api/1.0.0": {
       "type": "project",
