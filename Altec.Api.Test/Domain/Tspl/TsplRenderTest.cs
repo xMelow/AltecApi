@@ -23,7 +23,7 @@ public class TsplRenderTest
             new("TEXT", new List<string> { "10", "10", "0", "0", "16", "16", "Hello Altec" })
         };
     
-        var result = _render.Render(commands);
+        var result = _render.Render(commands, false);
     
         File.WriteAllBytes("C:/temp/test_label.png", result);
         Assert.NotEmpty(result);
@@ -50,7 +50,27 @@ public class TsplRenderTest
             new("TEXT", new List<string> { "396", "502", "0", "0", "16", "16", "Altec" }),
         };
 
-        var result = _render.Render(commands);
+        var result = _render.Render(commands, false);
+        
+        File.WriteAllBytes("C:/temp/testLabel.png", result);
+        Assert.NotEmpty(result);
+    }
+    
+    [Fact]
+    public void Render_FullComplicatedTsplLabel_SavesToPng()
+    {
+        var commands = new List<TsplDrawCommand>
+        {
+            new("SIZE", new List<string> { "80", "101" }),
+            new("BLOCK", new List<string> { "45", "300", "800", "60", "0", "0", "50", "60", "0", "2", "100" }),
+            new("BLOCK", new List<string> { "32", "550", "800", "50", "0", "0", "26", "26", "Altec" }),
+            new("BLOCK", new List<string> { "32", "680", "800", "250", "0", "0", "26", "26", "0", "1", "1", "Poduim boom altec"}),
+            new("TEXT", new List<string> { "32", "960", "0", "0", "12", "14", "DATUM IN:" }),
+            new("BLOCK", new List<string> { "32", "1025", "800", "50", "0", "0", "22", "22", "01/01/2026" }),
+            new("QRCODE", new List<string> { "700", "900", "L", "10", "A", "0", "M2", "S7", "132465789" }),
+        };
+
+        var result = _render.Render(commands, true);
         
         File.WriteAllBytes("C:/temp/testLabel.png", result);
         Assert.NotEmpty(result);
