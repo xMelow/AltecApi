@@ -190,23 +190,22 @@ public class TsplRender
         float blockWidth, float fontSize, int align)
     {
         var currentLine = "";
-        var textBounds = new SKRect();
-        paint.MeasureText(text, ref textBounds);
-        var yCursor = y + textBounds.Height;
+        font.GetFontMetrics(out var metrics);
+        var yCursor = y + Math.Abs(metrics.Ascent) * 0.5f;
         
         foreach (var word in text.Split(" "))
         {
-            if (font.MeasureText(currentLine + word) <= blockWidth)
-                currentLine += word + " ";
-            else
+            if (font.MeasureText(currentLine + word) >= blockWidth)
             {
                 var drawX = align == 2
                     ? x + (blockWidth - font.MeasureText(currentLine)) / 2
                     : x;
                 canvas.DrawText(currentLine, drawX, yCursor, font, paint);
                 yCursor += fontSize * 1.2f;
-                currentLine = word;
+                currentLine = word + " ";
             }
+            else
+                currentLine += word + " ";
         }
         if (!string.IsNullOrEmpty(currentLine))
         {
