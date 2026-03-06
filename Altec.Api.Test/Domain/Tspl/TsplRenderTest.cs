@@ -75,4 +75,26 @@ public class TsplRenderTest
         File.WriteAllBytes("C:/temp/testLabel.png", result);
         Assert.NotEmpty(result);
     }
+    
+    [Fact]
+    public void Render_Label3()
+    {
+        var commands = new List<TsplDrawCommand>
+        {
+            new("SIZE", new List<string> { "100", "50" }),
+            new("BAR", new List<string> { "12", "89", "1158", "5" }),
+            new("BOX", new List<string> { "12", "104", "1170", "515", "5" }),
+            new("TEXT", new List<string> { "1073", "30", "0", "0", "10", "10", "1" }),
+            new("TEXT", new List<string> { "26", "30", "0", "0", "10", "10", "Flor Stellamans" }),
+            new("TEXT", new List<string> { "26", "139", "0", "0", "10", "10", "Kerkstraat 55" }),
+            new("TEXT", new List<string> { "26", "248", "0", "0", "12", "12", "1851 Humbeek" }),
+            new("BARCODE", new List<string> { "33", "389", "128", "79", "2", "0", "4", "8", "+32468294226" }),
+            new("QRCODE", new List<string> { "867", "218", "L", "11", "A", "0", "M2", "S7", "flor@stellamans.be" }),
+        };
+
+        var result = _render.Render(commands, true);
+        
+        File.WriteAllBytes("C:/temp/testLabel.png", result);
+        Assert.NotEmpty(result);
+    }
 }

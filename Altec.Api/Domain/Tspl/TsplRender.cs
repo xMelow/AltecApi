@@ -261,7 +261,6 @@ public class TsplRender
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
         var height = Dots2Pixels(int.Parse(command.Arguments[3]));
         var narrow = Dots2Pixels(int.Parse(command.Arguments[6]));
-        var wide = Dots2Pixels(int.Parse(command.Arguments[7]));
         var width = narrow * 100;
         var content = command.Arguments[^1];
         var barcodeType = command.Arguments[2];
