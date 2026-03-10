@@ -9,12 +9,10 @@ public class TsplService : ITsplService
     private readonly TsplParser _tsplParser = new TsplParser();
     private readonly TsplRender _tsplRender = new TsplRender();
     
-    public byte[] RenderPreview(string tspl, bool showBlockOuline)
+    public byte[] RenderPreview(string tspl, bool showBlockOuline, Dictionary<string, string> images)
     {
         var tsplCommands = _tsplParser.Parse(tspl);
-        var labelPreview = _tsplRender.Render(tsplCommands, showBlockOuline);
-        
-        throw new NotImplementedException();
+        return _tsplRender.Render(tsplCommands, showBlockOuline, images);
     }
 
     public IReadOnlyList<TsplDrawCommand> Parse(string tspl)

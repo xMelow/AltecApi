@@ -23,7 +23,7 @@ public class TsplRenderTest
             new("TEXT", new List<string> { "10", "10", "0", "0", "16", "16", "Hello Altec" })
         };
     
-        var result = _render.Render(commands, false);
+        var result = _render.Render(commands, false, null);
     
         File.WriteAllBytes("C:/temp/test_label.png", result);
         Assert.NotEmpty(result);
@@ -50,7 +50,7 @@ public class TsplRenderTest
             new("TEXT", new List<string> { "396", "502", "0", "0", "16", "16", "Altec" }),
         };
 
-        var result = _render.Render(commands, false);
+        var result = _render.Render(commands, false, null);
         
         File.WriteAllBytes("C:/temp/testLabel.png", result);
         Assert.NotEmpty(result);
@@ -70,7 +70,7 @@ public class TsplRenderTest
             new("QRCODE", new List<string> { "700", "900", "L", "10", "A", "0", "M2", "S7", "132465789" }),
         };
 
-        var result = _render.Render(commands, true);
+        var result = _render.Render(commands, true, null);
         
         File.WriteAllBytes("C:/temp/testLabel.png", result);
         Assert.NotEmpty(result);
@@ -92,7 +92,7 @@ public class TsplRenderTest
             new("QRCODE", new List<string> { "867", "218", "L", "11", "A", "0", "M2", "S7", "flor@stellamans.be" }),
         };
 
-        var result = _render.Render(commands, true);
+        var result = _render.Render(commands, true, null);
         
         File.WriteAllBytes("C:/temp/testLabel.png", result);
         Assert.NotEmpty(result);
