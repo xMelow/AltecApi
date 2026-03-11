@@ -1,3 +1,7 @@
 ﻿namespace Altec.Api.Records;
 
-public record TsplPreviewRequest(string Tspl, bool ShowBlockOutlines = false);
+public record TsplPreviewRequest(
+    string Tspl, 
+    Dictionary<string, string>? Images = null,
+    bool ShowBlockOutlines = false
+);

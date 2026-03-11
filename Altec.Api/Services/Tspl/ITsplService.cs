@@ -4,6 +4,6 @@ namespace Altec.Api.Interface;
 
 public interface ITsplService
 {
-    byte[] RenderPreview(string tspl, bool showBlockOutline);
+    byte[] RenderPreview(string tspl, bool showBlockOutline, Dictionary<string, string> images);
     IReadOnlyList<TsplDrawCommand> Parse(string tspl);
 }
