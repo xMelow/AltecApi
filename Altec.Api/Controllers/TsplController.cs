@@ -12,7 +12,7 @@ public class TsplController : ControllerBase
 
     public TsplController(ITsplService tsplService)
     {
-        _tsplService = tsplService;
+        _tsplService = tsplService; 
     }
     
     [HttpGet]
@@ -25,7 +25,6 @@ public class TsplController : ControllerBase
     public IActionResult Preview([FromBody] TsplPreviewRequest request)
     {
         byte[] imageBytes = _tsplService.RenderPreview(request.Tspl, request.ShowBlockOutlines, request.Images);
-        System.IO.File.WriteAllBytes("C:/temp/apiTest.png", imageBytes);
         return File(imageBytes, "image/png");
     }
 
@@ -34,5 +33,12 @@ public class TsplController : ControllerBase
     {
         var commands = _tsplService.Parse(request.Tspl);
         return Ok(new TsplParseResponse(commands));
+    }
+
+    [HttpPost("validate")]
+    public IActionResult Validate([FromBody] TsplRequest request)
+    {
+        var result = _tsplService.Validate(request.Tspl);
+        return Ok(new TsplValidateResponse(result.IsValid, result.Error));
     }
 }

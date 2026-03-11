@@ -8,6 +8,7 @@ public class TsplService : ITsplService
 {
     private readonly TsplParser _tsplParser = new TsplParser();
     private readonly TsplRender _tsplRender = new TsplRender();
+    private readonly TsplValidator _tsplValidator = new TsplValidator();
     
     public byte[] RenderPreview(string tspl, bool showBlockOuline, Dictionary<string, string> images)
     {
@@ -18,5 +19,11 @@ public class TsplService : ITsplService
     public IReadOnlyList<TsplDrawCommand> Parse(string tspl)
     {
         return _tsplParser.Parse(tspl);
+    }
+
+    public (bool IsValid, string? Error) Validate(string tspl)
+    {
+        var result = _tsplValidator.Validate(tspl);
+        return (result.IsValid, result.Error);
     }
 }
