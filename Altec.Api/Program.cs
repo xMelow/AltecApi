@@ -1,5 +1,6 @@
 using Altec.Api.Interface;
 using Altec.Api.Services;
+using Altec.Api.Services.Printer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<ITsplService, TsplService>();
+builder.Services.AddScoped<IPrinterService, PrinterService>();
 
 var app = builder.Build();
 
