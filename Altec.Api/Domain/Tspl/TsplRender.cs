@@ -20,12 +20,8 @@ public class TsplRender
         
         var width = Mm2Pixels(int.Parse(sizeCommand.Arguments[0]));
         var height = Mm2Pixels(int.Parse(sizeCommand.Arguments[1]));
-        var bitmap = CreateBitMap(width, height, commands, showBlockOutline, images);
 
-        using var image = SKImage.FromBitmap(bitmap);
-        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-
-        return data.ToArray();
+        return CreateBitMap(width, height, commands, showBlockOutline, images);
     }
 
     private int Mm2Pixels(int mm)
@@ -34,7 +30,7 @@ public class TsplRender
         return Convert.ToInt32(Dots2Pixels((int) dots));
     }
     
-    private SKBitmap CreateBitMap(int width, int height, IReadOnlyList<TsplDrawCommand> commands, bool showBlockOutline, Dictionary<string, string> images)
+    private byte[] CreateBitMap(int width, int height, IReadOnlyList<TsplDrawCommand> commands, bool showBlockOutline, Dictionary<string, string> images)
     {
         SKBitmap bitmap = new SKBitmap(width, height);
         using var canvas = new SKCanvas(bitmap);
@@ -70,7 +66,10 @@ public class TsplRender
                     break;
             }
         }
-        return bitmap;
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        
+        return data.ToArray();
     }
 
     private float Dots2Pixels(int dots)
@@ -290,15 +289,19 @@ public class TsplRender
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas, Dictionary<string, string> images)
     {
         var filename = command.Arguments[2];
-        if (images == null || !images.ContainsKey(filename)) return;
-        
-        var base64 = images[filename];
-        var imageBytes = Convert.FromBase64String(base64);
-        var bitmap = SKBitmap.Decode(imageBytes);
+        if (!images.ContainsKey(filename)) return;
 
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
-        
-        canvas.DrawBitmap(bitmap, x, y);
+
+        var imageBytes = Convert.FromBase64String(images[filename]);
+        var bitmap = SKBitmap.Decode(imageBytes);
+
+        var scaledWidth = (int)(bitmap.Width * (ScreenDpi / PrinterDpi));
+        var scaledHeight = (int)(bitmap.Height * (ScreenDpi / PrinterDpi));
+
+        var scaledBitmap = bitmap.Resize(new SKImageInfo(scaledWidth, scaledHeight), SKFilterQuality.High);
+    
+        canvas.DrawBitmap(scaledBitmap, x, y);
     }
 }

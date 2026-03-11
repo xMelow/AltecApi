@@ -17,10 +17,11 @@ public class TsplParser
         
         foreach (var line in lines)
         {
-            var name = line.Split(" ")[0];
+            var trimmedLine = line.Trim();
+            var name = trimmedLine.Split(" ")[0];
             if (commandsToParse.Contains(name))
             {
-                result.Add(ParseTsplLine(line));
+                result.Add(ParseTsplLine(trimmedLine));
             }
         }
         return result;
