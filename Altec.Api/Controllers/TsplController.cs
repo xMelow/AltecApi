@@ -24,7 +24,8 @@ public class TsplController : ControllerBase
     [HttpPost("preview")]
     public IActionResult Preview([FromBody] TsplPreviewRequest request)
     {
-        byte[] imageBytes = _tsplService.RenderPreview(request.Tspl, request.ShowBlockOutlines);
+        byte[] imageBytes = _tsplService.RenderPreview(request.Tspl, request.ShowBlockOutlines, request.Images);
+        System.IO.File.WriteAllBytes("C:/temp/apiTest.png", imageBytes);
         return File(imageBytes, "image/png");
     }
 
