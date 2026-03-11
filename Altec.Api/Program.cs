@@ -1,6 +1,6 @@
 using Altec.Api.Interface;
 using Altec.Api.Services;
-using Altec.Api.Services.Printer;
+using Altec.Api.Services.Printers;
 
 var builder = WebApplication.CreateBuilder(args);
 
