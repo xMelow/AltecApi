@@ -16,10 +16,10 @@ public class PrinterController : ControllerBase
         _printerService = printerService; 
     }
 
-    [HttpGet]
-    public IActionResult Get()
+    [HttpGet("discover")]
+    public async Task<IActionResult> Discover([FromQuery] List<string> subnets)
     {
-        var printers = _printerService.GetPrinters();
+        var printers = _printerService.GetPrinters(subnets);
         return Ok(new PrinterResponse(printers));
     }
 }
