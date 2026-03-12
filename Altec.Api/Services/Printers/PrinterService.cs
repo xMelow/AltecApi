@@ -1,10 +1,10 @@
-﻿using Altec.Api.Domain.Printers;
+﻿using Altec.Api.Record.Printers;
 
 namespace Altec.Api.Services.Printers;
 
 public class PrinterService : IPrinterService
 {
-    public List<Printer> GetPrinters()
+    public IReadOnlyList<Printer> GetPrinters()
     {
         throw new NotImplementedException();
     }
