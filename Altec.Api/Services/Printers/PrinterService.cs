@@ -7,9 +7,9 @@ public class PrinterService : IPrinterService
 {
     private readonly PrinterDiscovery _printerDiscovery = new PrinterDiscovery();
     
-    public IReadOnlyList<Printer> GetPrinters(List<string> subnets)
+    public async Task<IReadOnlyList<Printer>> GetPrinters(List<string> subnets)
     {
-        _printerDiscovery.Discover(subnets);
-        throw new NotImplementedException();
+        var result = await _printerDiscovery.Discover(subnets);
+        return result;
     }
 }

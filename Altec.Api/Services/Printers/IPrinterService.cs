@@ -4,5 +4,5 @@ namespace Altec.Api.Services.Printers;
 
 public interface IPrinterService
 {
-    IReadOnlyList<Printer> GetPrinters(List<string> subnets);
+    Task<IReadOnlyList<Printer>> GetPrinters(List<string> subnets);
 }
