@@ -40,14 +40,17 @@ public class PrinterDiscovery
                 .Where(x => x.isOpen)
                 .Select(x => x.ip);
 
-            foreach (var ip in foundIps)
+            var printerTask = foundIps.Select(async ip =>
             {
-                printers.Add(new Printer(
-                    Name: ip.ToString(),
-                    HostnameOrIpAddress: ip.ToString(),
-                    Port: printerPort
-                ));
-            }
+                var name = await GetPrinterName(ip);
+                return new Printer(
+                    name,
+                    ip.ToString(),
+                    printerPort
+                );
+            });
+            var printerWithNames = await Task.WhenAll(printerTask);
+            printers.AddRange(printerWithNames);
         }
         return printers;
     }
@@ -71,6 +74,19 @@ public class PrinterDiscovery
         catch
         {
             return false;
+        }
+    }
+
+    private async Task<string> GetPrinterName(IPAddress ip)
+    {
+        try
+        {
+            var hostEntry = await Dns.GetHostEntryAsync(ip);
+            return hostEntry.HostName;
+        }
+        catch
+        {
+            return ip.ToString();
         }
     }
 }
