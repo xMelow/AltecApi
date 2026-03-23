@@ -1,3 +1,5 @@
-﻿namespace Altec.Api.Record.Printers;
+﻿using System.Net;
 
-public record Printer(string Name, string HostnameOrIpAddress, int Port);
+namespace Altec.Api.Record.Printers;
+
+public record Printer(string DnsName, string IpAddress, string model, int Port);
