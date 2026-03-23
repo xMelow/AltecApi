@@ -58,7 +58,6 @@ public class PrinterDiscovery
 
     private async Task<List<Printer>> GetPrinterDetails(IEnumerable<IPAddress> foundIps)
     {
-        List<Printer> printers = new List<Printer>();
         var printerTask = foundIps.Select(async ip =>
             {
                 try
@@ -72,7 +71,7 @@ public class PrinterDiscovery
                 }
             });
         var foundPrinters = await Task.WhenAll(printerTask);
-        return foundPrinters.Where(p => p != null).ToList();
+        return foundPrinters.Where(p => p != null && p.model != "Unknown").ToList();
     }
 
     private (IPAddress baseIp, int prefixLength) ParseSubnet(string subnet)
@@ -97,7 +96,7 @@ public class PrinterDiscovery
             await Task.WhenAny(connectTask, timeoutTask);
             return client.Connected;
         }
-        catch (Exception ex)
+        catch
         {
             return false;
         }
@@ -116,7 +115,7 @@ public class PrinterDiscovery
         try
         {
             var dnsTask = Dns.GetHostEntryAsync(ip);
-            var timeoutTask = Task.Delay(400);
+            var timeoutTask = Task.Delay(100);
             var completed = await Task.WhenAny(dnsTask, timeoutTask);
             if (completed == dnsTask)
                 return (await dnsTask).HostName;
@@ -130,32 +129,24 @@ public class PrinterDiscovery
 
     private async Task<string> GetPrinterModelName(IPAddress ip)
     {
-        try
-        {
-            using var client = new TcpClient();
-            await client.ConnectAsync(ip, PrinterPort);
-            var stream = client.GetStream();
-            byte[] command = Encoding.ASCII.GetBytes("~!T\r\n");
-            await stream.WriteAsync(command, 0, command.Length);
-            
-            await Task.Delay(200);
-            
-            byte[] buffer = new byte[1024];
-            var readTask = stream.ReadAsync(buffer, 0, buffer.Length);
-            var timeoutTask = Task.Delay(400);
-            var completed = await Task.WhenAny(readTask, timeoutTask);
+        using var client = new TcpClient();
+        await client.ConnectAsync(ip, PrinterPort);
+        var stream = client.GetStream();
+        byte[] command = Encoding.ASCII.GetBytes("~!T\r\n");
+        await stream.WriteAsync(command, 0, command.Length);
         
-            if (completed == readTask)
-            {
-                var bytesRead = await readTask;
-                return Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            }
-            return "Unknown";
-        }
-        catch
+        await Task.Delay(200);
+        
+        byte[] buffer = new byte[1024];
+        var readTask = stream.ReadAsync(buffer, 0, buffer.Length);
+        var timeoutTask = Task.Delay(400);
+        var completed = await Task.WhenAny(readTask, timeoutTask);
+    
+        if (completed == readTask)
         {
-            // convert to issue
-            return "Can't get printer model name";
+            var bytesRead = await readTask;
+            return Encoding.ASCII.GetString(buffer, 0, bytesRead);
         }
+        return "Unknown";
     }
 }
