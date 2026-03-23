@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Altec.Api.Controllers;
 
 [ApiController]
-[Route("tspl")]
+[Route("api/[controller]")]
 public class TsplController : ControllerBase
 {
     private readonly ITsplService _tsplService;

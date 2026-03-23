@@ -1,11 +1,12 @@
 ﻿using Altec.Api.Interface;
-using Altec.Api.Services.Printer;
+using Altec.Api.Record.Printers;
+using Altec.Api.Services.Printers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Altec.Api.Controllers;
 
 [ApiController]
-[Route("printer")]
+[Route("printers")]
 public class PrinterController : ControllerBase
 {
     private readonly IPrinterService _printerService;
@@ -15,9 +16,10 @@ public class PrinterController : ControllerBase
         _printerService = printerService; 
     }
 
-    [HttpGet]
-    public IActionResult Get()
+    [HttpGet("discover")]
+    public async Task<IActionResult> Discover([FromQuery] List<string> subnets)
     {
-        return Ok("Ok! The printer endpoint works!");
+        var printers = await _printerService.GetPrinters(subnets);
+        return Ok(new PrinterResponse(printers));
     }
 }

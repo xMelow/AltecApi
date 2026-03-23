@@ -1,11 +1,16 @@
+using System.Text.Json;
 using Altec.Api.Interface;
 using Altec.Api.Services;
-using Altec.Api.Services.Printer;
+using Altec.Api.Services.Printers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<ITsplService, TsplService>();

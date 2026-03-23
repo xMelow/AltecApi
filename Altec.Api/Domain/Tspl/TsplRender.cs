@@ -288,7 +288,7 @@ public class TsplRender
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas, Dictionary<string, string> images)
     {
-        var filename = command.Arguments[2];
+        var filename = command.Arguments[2].ToLower();
         if (!images.ContainsKey(filename)) return;
 
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
