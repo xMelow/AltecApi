@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using Altec.Api.Record.Printers;
@@ -8,65 +7,72 @@ namespace Altec.Api.Domain.Printers;
 
 public class PrinterDiscovery
 {
-    public PrinterDiscovery() {}
+    private const int PrinterPort = 9100;
     
     public async Task<IReadOnlyList<Printer>> Discover(List<string> subnets)
     {
         List<Printer> printers = new List<Printer>();
-        
         foreach (var subnet in subnets)
         {
-            const int printerPort = 9100;
-            var subnetData = ParseSubnet(subnet);
-            var bytes = subnetData.baseIp.GetAddressBytes();
-            var startIp = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-            var numberOfAddresses = (int)Math.Pow(2, 32 - subnetData.prefixLength);
-            List<IPAddress> ipAddresses = new List<IPAddress>();
-            for (int i = startIp; i < numberOfAddresses + startIp; i++)
+            var ipAddresses = GetSubnetIpAddresses(subnet);
+            var foundIps = await ScanForOpenPorts(ipAddresses);
+            var foundPrinters = await GetPrinterDetails(foundIps);
+            printers.AddRange(foundPrinters);
+        }
+        return printers;
+    }
+
+    private IReadOnlyList<IPAddress> GetSubnetIpAddresses(string subnet)
+    {
+        var subnetData = ParseSubnet(subnet);
+        var bytes = subnetData.baseIp.GetAddressBytes();
+        var startIp = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
+        var numberOfAddresses = (int)Math.Pow(2, 32 - subnetData.prefixLength);
+        List<IPAddress> ipAddresses = new List<IPAddress>();
+        for (int i = startIp; i < numberOfAddresses + startIp; i++)
+        {
+            var ipBytes = new byte[]
             {
-                var ipBytes = new byte[]
-                {
-                    (byte)(i >> 24),
-                    (byte)(i >> 16),
-                    (byte)(i >> 8),
-                    (byte)i
-                };
-                var ipAddress = new IPAddress(ipBytes);
-                if (IsValidHostAddress(ipAddress))
-                    ipAddresses.Add(ipAddress);
-            }
-            var sw = System.Diagnostics.Stopwatch.StartNew();
+                (byte)(i >> 24),
+                (byte)(i >> 16),
+                (byte)(i >> 8),
+                (byte)i
+            };
+            var ipAddress = new IPAddress(ipBytes);
+            if (IsValidHostAddress(ipAddress))
+                ipAddresses.Add(ipAddress);
+        }
+        return ipAddresses;
+    }
 
-            var tasks = ipAddresses.Select(ip => IsPortOpen(ip, printerPort, 200));
-            var results = await Task.WhenAll(tasks);
-            Console.WriteLine($"Port scan took: {sw.ElapsedMilliseconds}ms");
-            var foundIps = ipAddresses
-                .Zip(results, (ip, isOpen) => (ip, isOpen))
-                .Where(x => x.isOpen)
-                .Select(x => x.ip);
+    private async Task<IEnumerable<IPAddress>> ScanForOpenPorts(IReadOnlyList<IPAddress> ipAddresses)
+    {
+        var tasks = ipAddresses.Select(ip => IsPortOpen(ip, PrinterPort, 200));
+        var results = await Task.WhenAll(tasks);
+        var foundIps = ipAddresses
+            .Zip(results, (ip, isOpen) => (ip, isOpen))
+            .Where(x => x.isOpen)
+            .Select(x => x.ip);
+        return foundIps;
+    }
 
-            sw.Restart();
-            var printerTask = foundIps.Select(async ip =>
+    private async Task<List<Printer>> GetPrinterDetails(IEnumerable<IPAddress> foundIps)
+    {
+        List<Printer> printers = new List<Printer>();
+        var printerTask = foundIps.Select(async ip =>
             {
                 try
                 {
-                    var printerInfo = await GetPrinterInfo(ip, printerPort);
-                    return new Printer(printerInfo.printerDnsName, ip.ToString(), printerInfo.printerModelName, printerPort);
+                    var printerInfo = await GetPrinterInfo(ip);
+                    return new Printer(printerInfo.printerDnsName, ip.ToString(), printerInfo.printerModelName, PrinterPort);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Console.WriteLine($"Error for {ip}: {ex.Message}");
                     return null;
                 }
             });
-            var foundPrinters = await Task.WhenAll(printerTask);
-            Console.WriteLine($"Printer info took: {sw.ElapsedMilliseconds}ms");
-
-            printers.AddRange(foundPrinters.Where(p => p != null));
-            
-            
-        }
-        return printers;
+        var foundPrinters = await Task.WhenAll(printerTask);
+        return foundPrinters.Where(p => p != null).ToList();
     }
 
     private (IPAddress baseIp, int prefixLength) ParseSubnet(string subnet)
@@ -93,15 +99,14 @@ public class PrinterDiscovery
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"IsPortOpen error for {ip}: {ex.Message}");
             return false;
         }
     }
 
-    private async Task<(string printerDnsName, string printerModelName)> GetPrinterInfo(IPAddress ip, int port)
+    private async Task<(string printerDnsName, string printerModelName)> GetPrinterInfo(IPAddress ip)
     {
         var dnsTask = GetPrinterDnsName(ip);
-        var modelTask = GetPrinterModelName(ip, port);
+        var modelTask = GetPrinterModelName(ip);
         await Task.WhenAll(dnsTask, modelTask);
         return (await dnsTask, await modelTask);
     }
@@ -111,7 +116,7 @@ public class PrinterDiscovery
         try
         {
             var dnsTask = Dns.GetHostEntryAsync(ip);
-            var timeoutTask = Task.Delay(200);
+            var timeoutTask = Task.Delay(400);
             var completed = await Task.WhenAny(dnsTask, timeoutTask);
             if (completed == dnsTask)
                 return (await dnsTask).HostName;
@@ -123,21 +128,21 @@ public class PrinterDiscovery
         }
     }
 
-    private async Task<string> GetPrinterModelName(IPAddress ip, int port)
+    private async Task<string> GetPrinterModelName(IPAddress ip)
     {
         try
         {
             using var client = new TcpClient();
-            await client.ConnectAsync(ip, port);
+            await client.ConnectAsync(ip, PrinterPort);
             var stream = client.GetStream();
             byte[] command = Encoding.ASCII.GetBytes("~!T\r\n");
             await stream.WriteAsync(command, 0, command.Length);
             
-            await Task.Delay(100);
+            await Task.Delay(200);
             
             byte[] buffer = new byte[1024];
             var readTask = stream.ReadAsync(buffer, 0, buffer.Length);
-            var timeoutTask = Task.Delay(200);
+            var timeoutTask = Task.Delay(400);
             var completed = await Task.WhenAny(readTask, timeoutTask);
         
             if (completed == readTask)
