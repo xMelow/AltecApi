@@ -13,4 +13,10 @@
         <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.22" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="SDK.NET.Interface">
+        <HintPath>..\..\..\..\..\..\Program Files\NiceLabel\NiceLabel 10\bin.net\SDK.NET.Interface.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

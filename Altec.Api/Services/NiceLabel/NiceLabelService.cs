@@ -4,6 +4,6 @@ public class NiceLabelService : INiceLabelService
 {
     public void PrintLabel(string label)
     {
-        throw new NotImplementedException();
+        
     }
 }

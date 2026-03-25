@@ -15,7 +15,7 @@ public class NiceLabelController : ControllerBase
         _niceLabelService = niceLabelService;
     }
 
-    [HttpGet("print/label")]
+    [HttpPost("print/label")]
     public async Task<IActionResult> Discover([FromBody] string labelFile)
     {
         _niceLabelService.PrintLabel(labelFile);
