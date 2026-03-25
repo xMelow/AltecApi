@@ -12,4 +12,9 @@ public class NiceLabelEngine
         _printEngine = PrintEngineFactory.PrintEngine;
         _printEngine.Initialize();
     }
+
+    public IReadOnlyList<string> GetVariables(Stream labelStream)
+    {
+        return new List<string>();
+    }
 }

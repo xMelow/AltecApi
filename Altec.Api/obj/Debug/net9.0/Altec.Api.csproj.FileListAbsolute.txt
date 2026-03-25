@@ -41,3 +41,5 @@ C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-x
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\runtimes\win-x86\native\libSkiaSharp.pdb
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\zxing.dll
 C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\ZXing.SkiaSharp.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\SDK.NET.Interface.dll
+C:\Users\Flor\Documents\Code\Altec.Api\Altec.Api\bin\Debug\net9.0\SDK.NET.Interface.xml

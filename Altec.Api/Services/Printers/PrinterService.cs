@@ -5,7 +5,12 @@ namespace Altec.Api.Services.Printers;
 
 public class PrinterService : IPrinterService
 {
-    private readonly PrinterDiscovery _printerDiscovery = new PrinterDiscovery();
+    private readonly PrinterDiscovery _printerDiscovery;
+    
+    public PrinterService(PrinterDiscovery printerDiscovery)
+    {
+        _printerDiscovery = printerDiscovery;
+    }
     
     public async Task<IReadOnlyList<Printer>> GetPrinters(List<string> subnets)
     {

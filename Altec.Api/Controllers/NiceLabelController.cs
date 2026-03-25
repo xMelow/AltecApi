@@ -15,10 +15,10 @@ public class NiceLabelController : ControllerBase
         _niceLabelService = niceLabelService;
     }
 
-    [HttpPost("print/label")]
-    public async Task<IActionResult> Discover([FromBody] string labelFile)
+    [HttpPost("print")]
+    public async Task<IActionResult> Print(IFormFile file)
     {
-        _niceLabelService.PrintLabel(labelFile);
+        _niceLabelService.PrintLabel(file);
         return Ok();
     }
 }

@@ -2,5 +2,5 @@
 
 public interface INiceLabelService
 {
-    void PrintLabel(string label);
+    void PrintLabel(IFormFile label);
 }

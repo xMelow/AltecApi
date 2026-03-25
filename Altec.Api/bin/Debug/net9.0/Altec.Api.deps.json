@@ -11,7 +11,8 @@
           "Microsoft.AspNetCore.OpenApi": "9.0.9",
           "SkiaSharp": "3.119.3-preview.1.1",
           "ZXing.Net": "0.16.11",
-          "ZXing.Net.Bindings.SkiaSharp": "0.16.22"
+          "ZXing.Net.Bindings.SkiaSharp": "0.16.22",
+          "SDK.NET.Interface": "17.2.0.0"
         },
         "runtime": {
           "Altec.Api.dll": {}
@@ -110,6 +111,14 @@
             "fileVersion": "0.16.22.0"
           }
         }
+      },
+      "SDK.NET.Interface/17.2.0.0": {
+        "runtime": {
+          "SDK.NET.Interface.dll": {
+            "assemblyVersion": "17.2.0.0",
+            "fileVersion": "21.5.0.11092"
+          }
+        }
       }
     }
   },
@@ -167,6 +176,11 @@
       "sha512": "sha512-jdlarXJKukpYjnNf6bS7/ncRSZQh7v4uwUMFsaIc3MPZtY+fcQS0ONGXI4BSEEcNhxb8UfrULtRuL9ToLPhn1g==",
       "path": "zxing.net.bindings.skiasharp/0.16.22",
       "hashPath": "zxing.net.bindings.skiasharp.0.16.22.nupkg.sha512"
+    },
+    "SDK.NET.Interface/17.2.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }
