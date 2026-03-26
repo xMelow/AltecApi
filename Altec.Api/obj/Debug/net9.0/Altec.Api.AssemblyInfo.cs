@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Altec.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7017b5ed0fd746ea6dce1ca8d8b45b290d2081b4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b9287c38ec2038387c47c37a7c26d6ac57e25897")]
 [assembly: System.Reflection.AssemblyProductAttribute("Altec.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Altec.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

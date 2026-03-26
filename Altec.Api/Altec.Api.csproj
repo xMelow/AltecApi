@@ -4,6 +4,8 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <PlatformTarget>x86</PlatformTarget>
+        <Prefer32Bit>true</Prefer32Bit>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,9 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="SDK.NET.Interface">
-        <HintPath>..\..\..\..\..\..\Program Files\NiceLabel\NiceLabel 10\bin.net\SDK.NET.Interface.dll</HintPath>
-      </Reference>
+        <Reference Include="SDK.NET">
+            <HintPath>C:\Program Files\NiceLabel\NiceLabel 10\bin.net\SDK.NET.dll</HintPath>
+        </Reference>
+        <Reference Include="SDK.NET.Interface">
+            <HintPath>C:\Program Files\NiceLabel\NiceLabel 10\bin.net\SDK.NET.Interface.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Altec.Api.Domain.NiceLabel;
 using Altec.Api.Domain.Printers;
 using Altec.Api.Domain.Tspl;
 using Altec.Api.Interface;
@@ -22,8 +21,10 @@ builder.Services.AddScoped<TsplRender>();
 builder.Services.AddScoped<TsplValidator>();
 builder.Services.AddScoped<ITsplService, TsplService>();
 
-builder.Services.AddScoped<NiceLabelEngine>();
-builder.Services.AddScoped<INiceLabelService, NiceLabelService>();
+builder.Services.AddHttpClient<INiceLabelClient, NiceLabelClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:44368/");
+});
 
 builder.Services.AddScoped<PrinterDiscovery>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();

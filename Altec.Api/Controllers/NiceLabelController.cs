@@ -7,18 +7,24 @@ namespace Altec.Api.Controllers;
 [Route("api/[controller]")]
 public class NiceLabelController : ControllerBase
 {
+    private readonly INiceLabelClient _niceLabelClient;
 
-    private readonly INiceLabelService _niceLabelService;
-
-    public NiceLabelController(INiceLabelService niceLabelService)
+    public NiceLabelController(INiceLabelClient niceLabelClient)
     {
-        _niceLabelService = niceLabelService;
+        _niceLabelClient = niceLabelClient;
     }
 
     [HttpPost("print")]
-    public async Task<IActionResult> Print(IFormFile file)
+    public IActionResult Print(IFormFile file)
     {
-        _niceLabelService.PrintLabel(file);
         return Ok();
     }
+
+    [HttpPost("variables")]
+    public async Task<IActionResult> Variables(IFormFile label)
+    {
+        var variables = await _niceLabelClient.GetVariables(label);
+        return Ok(variables);
+    }
+    
 }

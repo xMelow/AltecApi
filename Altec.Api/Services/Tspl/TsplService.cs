@@ -16,6 +16,7 @@ public class TsplService : ITsplService
         _tsplRender = tsplRender;
         _tsplValidator = tsplValidator;
     }
+    
     public byte[] RenderPreview(string tspl, bool showBlockOuline, Dictionary<string, string> images)
     {
         var tsplCommands = _tsplParser.Parse(tspl);
