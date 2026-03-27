@@ -23,9 +23,15 @@ builder.Services.AddScoped<ITsplService, TsplService>();
 
 builder.Services.AddHttpClient<INiceLabelClient, NiceLabelClient>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:44368/");
+    client.BaseAddress = new Uri("https://localhost:44368/");
+    client.DefaultRequestVersion = new Version(1, 1);
+    client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = 
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
 });
-
 builder.Services.AddScoped<PrinterDiscovery>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
 

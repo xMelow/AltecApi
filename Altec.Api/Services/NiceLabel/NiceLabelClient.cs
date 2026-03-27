@@ -13,20 +13,20 @@ public class NiceLabelClient : INiceLabelClient
 
     public async Task<IReadOnlyList<string>> GetVariables(IFormFile labelFile)
     {
-        using var stream = labelFile.OpenReadStream();
+        using var memoryStream = new MemoryStream();
+        await labelFile.CopyToAsync(memoryStream);
+        var fileBytes = memoryStream.ToArray();
 
         var content = new MultipartFormDataContent();
-
-        var fileContent = new StreamContent(stream);
-        fileContent.Headers.ContentType = new MediaTypeHeaderValue(labelFile.ContentType ?? "application/octet-stream");
-
+        var fileContent = new ByteArrayContent(fileBytes);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+            labelFile.ContentType ?? "application/octet-stream"
+        );
         content.Add(fileContent, "labels", labelFile.FileName);
 
-        var response = await _httpClient.PostAsync(
-            "http://localhost:44368/nicelabel/variables",
-            content
-        );
-
+        var request = new HttpRequestMessage(HttpMethod.Post, "nicelabel/variables");
+        
+        var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<List<string>>();

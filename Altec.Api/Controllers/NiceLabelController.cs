@@ -26,5 +26,4 @@ public class NiceLabelController : ControllerBase
         var variables = await _niceLabelClient.GetVariables(label);
         return Ok(variables);
     }
-    
 }
