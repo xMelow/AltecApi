@@ -1,6 +1,9 @@
 using System.Text.Json;
+using Altec.Api.Domain.Printers;
+using Altec.Api.Domain.Tspl;
 using Altec.Api.Interface;
 using Altec.Api.Services;
+using Altec.Api.Services.NiceLabel;
 using Altec.Api.Services.Printers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +16,23 @@ builder.Services.AddControllers()
     });
 builder.Services.AddOpenApi();
 
+builder.Services.AddScoped<TsplParser>();
+builder.Services.AddScoped<TsplRender>();
+builder.Services.AddScoped<TsplValidator>();
 builder.Services.AddScoped<ITsplService, TsplService>();
+
+builder.Services.AddHttpClient<INiceLabelClient, NiceLabelClient>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:44368/");
+    client.DefaultRequestVersion = new Version(1, 1);
+    client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = 
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+});
+builder.Services.AddScoped<PrinterDiscovery>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
 
 var app = builder.Build();

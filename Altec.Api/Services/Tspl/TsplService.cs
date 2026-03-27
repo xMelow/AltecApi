@@ -6,9 +6,16 @@ namespace Altec.Api.Services;
 
 public class TsplService : ITsplService
 {
-    private readonly TsplParser _tsplParser = new TsplParser();
-    private readonly TsplRender _tsplRender = new TsplRender();
-    private readonly TsplValidator _tsplValidator = new TsplValidator();
+    private readonly TsplParser _tsplParser;
+    private readonly TsplRender _tsplRender;
+    private readonly TsplValidator _tsplValidator;
+    
+    public TsplService(TsplParser tsplParser, TsplRender tsplRender, TsplValidator tsplValidator)
+    {
+        _tsplParser = tsplParser;
+        _tsplRender = tsplRender;
+        _tsplValidator = tsplValidator;
+    }
     
     public byte[] RenderPreview(string tspl, bool showBlockOuline, Dictionary<string, string> images)
     {
