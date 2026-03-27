@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Altec.Api.Controllers;
 
 [ApiController]
-[Route("printers")]
+[Route("api/[controller]")]
 public class PrinterController : ControllerBase
 {
     private readonly IPrinterService _printerService;
