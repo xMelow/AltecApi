@@ -15,14 +15,17 @@ public class NiceLabelController : ControllerBase
     }
 
     [HttpPost("print")]
-    public IActionResult Print(IFormFile file)
+    public async Task<IActionResult> Print(IFormFile labelFile)
     {
+        var response = await _niceLabelClient.PrintLabel(labelFile);
         return Ok();
     }
 
     [HttpPost("variables")]
     public async Task<IActionResult> Variables(IFormFile label)
     {
+        if (label == null || label.Length == 0) return BadRequest("Body can't be empty");
+        
         var variables = await _niceLabelClient.GetVariables(label);
         return Ok(variables);
     }
