@@ -26,11 +26,20 @@ public class NiceLabelClient : INiceLabelClient
         return result!.AsReadOnly();
     }
 
-    public async Task<string> PrintLabel(IFormFile labelFile)
+    public async Task PrintLabel(IFormFile labelFile, string? printerIpAddress)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, "nicelabel/printLabel");
-        var response = await _httpClient.SendAsync(request);
+        var fileStream = labelFile.OpenReadStream();
+        StreamContent streamContent = new StreamContent(fileStream);
 
-        return response.ToString();
+        var content = new MultipartFormDataContent();
+        content.Add(streamContent, "label");
+        if (printerIpAddress != null)
+            content.Add(new StringContent(printerIpAddress), "printerIp");
+        
+        var request = new HttpRequestMessage(HttpMethod.Post, "nicelabel/printLabel");
+        request.Content = content;
+        
+        var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
     }
 }

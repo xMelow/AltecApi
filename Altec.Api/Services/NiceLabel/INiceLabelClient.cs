@@ -3,5 +3,5 @@
 public interface INiceLabelClient
 { 
     Task<IReadOnlyList<string>> GetVariables(IFormFile labelFile);
-    Task<string> PrintLabel(IFormFile labelFile);
+    Task PrintLabel(IFormFile labelFile, string? printerIpAddress);
 }

@@ -14,19 +14,28 @@ public class NiceLabelController : ControllerBase
         _niceLabelClient = niceLabelClient;
     }
 
-    [HttpPost("print")]
-    public async Task<IActionResult> Print(IFormFile labelFile)
-    {
-        var response = await _niceLabelClient.PrintLabel(labelFile);
-        return Ok();
-    }
-
     [HttpPost("variables")]
-    public async Task<IActionResult> Variables(IFormFile label)
+    public async Task<IActionResult> Variables(IFormFile labelFile)
     {
-        if (label == null || label.Length == 0) return BadRequest("Body can't be empty");
+        if (labelFile == null || labelFile.Length == 0) return BadRequest("Body can't be empty");
         
-        var variables = await _niceLabelClient.GetVariables(label);
+        var variables = await _niceLabelClient.GetVariables(labelFile);
         return Ok(variables);
+    }
+    
+    [HttpPost("print")]
+    public async Task<IActionResult> Print(IFormFile labelFile, string? printerIpAddress)
+    {
+        if (labelFile == null || labelFile.Length == 0) return BadRequest("Label file needs to be present");
+        try
+        {
+            await _niceLabelClient.PrintLabel(labelFile, printerIpAddress);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error printing label : {ex.Message}" );
+        }
+        
+        return Ok("Printing label...");
     }
 }
