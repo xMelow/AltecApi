@@ -26,13 +26,14 @@ public class NiceLabelClient : INiceLabelClient
         return result!.AsReadOnly();
     }
 
-    public async Task PrintLabel(IFormFile labelFile, string? printerIpAddress)
+    public async Task PrintLabel(IFormFile labelFile, int quantity, string? printerIpAddress)
     {
         var fileStream = labelFile.OpenReadStream();
         StreamContent streamContent = new StreamContent(fileStream);
 
         var content = new MultipartFormDataContent();
         content.Add(streamContent, "label");
+        content.Add(new StringContent(quantity.ToString()), "quantity");
         if (printerIpAddress != null)
             content.Add(new StringContent(printerIpAddress), "printerIp");
         
