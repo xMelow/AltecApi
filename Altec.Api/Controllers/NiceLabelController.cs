@@ -1,4 +1,5 @@
-﻿using Altec.Api.Services.NiceLabel;
+﻿using System.Diagnostics;
+using Altec.Api.Services.NiceLabel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Altec.Api.Controllers;
@@ -15,12 +16,12 @@ public class NiceLabelController : ControllerBase
     }
 
     [HttpPost("variables")]
-    public async Task<IActionResult> Variables(IFormFile labelFile)
+    public async Task<IActionResult> Variables(IFormFile label)
     {
-        if (labelFile == null || labelFile.Length == 0) return BadRequest("Label can't be empty");
+        if (label == null || label.Length == 0) return BadRequest("Label can't be empty");
         try
         {
-             var variables = await _niceLabelClient.GetVariables(labelFile);
+             var variables = await _niceLabelClient.GetVariables(label);
              return Ok(variables);
         }
         catch (Exception ex)
@@ -30,12 +31,14 @@ public class NiceLabelController : ControllerBase
     }
     
     [HttpPost("print")]
-    public async Task<IActionResult> Print(IFormFile labelFile, int quantity, string? printerName)
+    public async Task<IActionResult> Print(IFormFile label, [FromForm] int quantity, [FromForm] string? printerName)
     {
-        if (labelFile == null || labelFile.Length == 0) return BadRequest("Label file needs to be present");
+        if (label == null || label.Length == 0) return BadRequest("Label file needs to be present");
+        if (quantity == null) return BadRequest("Quantity must be present");
+        
         try
         {
-            await _niceLabelClient.PrintLabel(labelFile, quantity, printerName);
+            await _niceLabelClient.PrintLabel(label, quantity, printerName);
         }
         catch (Exception ex)
         {

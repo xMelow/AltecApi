@@ -16,7 +16,7 @@ public class NiceLabelClient : INiceLabelClient
         var fileStream = labelFile.OpenReadStream();
         StreamContent streamContent = new StreamContent(fileStream);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "/NiceLabel/variables");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/variables");
         request.Content = streamContent;
         
         var response = await _httpClient.SendAsync(request);
@@ -29,15 +29,16 @@ public class NiceLabelClient : INiceLabelClient
     public async Task PrintLabel(IFormFile labelFile, int quantity, string? printerIpAddress)
     {
         var fileStream = labelFile.OpenReadStream();
+        fileStream.Position = 0;
         StreamContent streamContent = new StreamContent(fileStream);
 
         var content = new MultipartFormDataContent();
         content.Add(streamContent, "label");
         content.Add(new StringContent(quantity.ToString()), "quantity");
         if (printerIpAddress != null)
-            content.Add(new StringContent(printerIpAddress), "printerIp");
+            content.Add(new StringContent(printerIpAddress), "printerName");
         
-        var request = new HttpRequestMessage(HttpMethod.Post, "nicelabel/printLabel");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/print");
         request.Content = content;
         
         var response = await _httpClient.SendAsync(request);
