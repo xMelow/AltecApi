@@ -14,12 +14,6 @@ public class TsplController : ControllerBase
     {
         _tsplService = tsplService; 
     }
-    
-    [HttpGet]
-    public IActionResult Get()
-    {
-        return Ok("Ok! The TSPL endpoint works!");
-    }
 
     [HttpPost("preview")]
     public IActionResult Preview([FromBody] TsplPreviewRequest request)

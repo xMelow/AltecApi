@@ -20,10 +20,12 @@ builder.Services.AddScoped<TsplParser>();
 builder.Services.AddScoped<TsplRender>();
 builder.Services.AddScoped<TsplValidator>();
 builder.Services.AddScoped<ITsplService, TsplService>();
+builder.Services.AddScoped<PrinterDiscovery>();
+builder.Services.AddScoped<IPrinterService, PrinterService>();
 
 builder.Services.AddHttpClient<INiceLabelClient, NiceLabelClient>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:44368/");
+    client.BaseAddress =  new Uri(builder.Configuration["NiceLabelApi:BaseUrl"]);
     client.DefaultRequestVersion = new Version(1, 1);
     client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
 })
@@ -32,8 +34,7 @@ builder.Services.AddHttpClient<INiceLabelClient, NiceLabelClient>(client =>
     ServerCertificateCustomValidationCallback = 
         HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
 });
-builder.Services.AddScoped<PrinterDiscovery>();
-builder.Services.AddScoped<IPrinterService, PrinterService>();
+
 
 var app = builder.Build();
 
