@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Altec.Api.Records;
 using SkiaSharp;
 using ZXing;
@@ -160,24 +161,32 @@ public class TsplRender
 
     private void DrawBlockCommand(TsplDrawCommand command, SKCanvas canvas, bool showBlockOutline)
     {
-        var (x, y, width, height, fontSize, align, text) = ParseBlockArguments(command);
+        var (x, y, width, height, rotation, fontSize, align, text) = ParseBlockArguments(command);
     
         using var paint = new SKPaint { Color = SKColors.Black, IsAntialias = true };
         using var font = new SKFont { Size = fontSize };
-        
-        DrawWrappedText(canvas, font, paint, text, x, y, width, fontSize, align);
+
+        canvas.Save();
+
+        if (rotation > 0)
+            canvas.RotateDegrees(rotation, x, y);
+
+        DrawWrappedText(canvas, font, paint, text, x, y, width, fontSize, rotation, align);
         
         if (showBlockOutline)
             DrawBlockOutline(canvas, x, y, width, height);
+
+        canvas.Restore();
     }
 
-    private (float x, float y, float width, float height, float fontSize, int algin, string text) ParseBlockArguments(TsplDrawCommand command)
+    private (float x, float y, float width, float height, float rotation, float fontSize, int algin, string text) ParseBlockArguments(TsplDrawCommand command)
     {
         const double baseDotHeight = 3.6;
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
         var width = Dots2Pixels(int.Parse(command.Arguments[2]));
         var height = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var rotation = int.Parse(command.Arguments[5]);
         var yScale = int.Parse(command.Arguments[7]);
         var text = command.Arguments[^1];
         var fontSize = Dots2Pixels((int)(baseDotHeight * yScale));
@@ -185,11 +194,11 @@ public class TsplRender
             ? int.Parse(command.Arguments[9])
             : 0;
         
-        return (x, y, width, height, fontSize, align, text);
+        return (x, y, width, height, rotation, fontSize, align, text);
     } 
 
     private void DrawWrappedText(SKCanvas canvas, SKFont font, SKPaint paint, string text, float x, float y,
-        float blockWidth, float fontSize, int align)
+        float blockWidth, float fontSize, float rotation, int align)
     {
         var currentLine = "";
         font.GetFontMetrics(out var metrics);
@@ -288,7 +297,10 @@ public class TsplRender
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas, Dictionary<string, string> images)
     {
-        var filename = command.Arguments[2].ToLower();
+        var filename = command.Arguments[2];
+        Debug.WriteLine(filename);
+        Debug.WriteLine(images[filename]);
+
         if (!images.ContainsKey(filename)) return;
 
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
