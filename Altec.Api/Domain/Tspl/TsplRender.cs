@@ -83,9 +83,10 @@ public class TsplRender
         const double baseDotHeight = 3.6;
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
-        var text = command.Arguments[6];
         var yScale = int.Parse(command.Arguments[5]);
         var fontSize = Dots2Pixels((int)(baseDotHeight * yScale));
+        var rotation = int.Parse(command.Arguments[3]);
+        var text = command.Arguments[^1];
 
         using var paint = new SKPaint
         {
@@ -101,8 +102,13 @@ public class TsplRender
         var textBounds = new SKRect();
         paint.MeasureText(text, ref textBounds);
         var yBaseline = y + textBounds.Height;
+
+        canvas.Save();
+        if (rotation > 0)
+            canvas.RotateDegrees(rotation, x, y);
         
         canvas.DrawText(text, x, yBaseline, font, paint);
+        canvas.Restore();
     }
     
     private void DrawBarCommand(TsplDrawCommand command, SKCanvas canvas)
@@ -202,7 +208,7 @@ public class TsplRender
     {
         var currentLine = "";
         font.GetFontMetrics(out var metrics);
-        var yCursor = y + Math.Abs(metrics.Ascent) * 0.5f;
+        var yCursor = y + Math.Abs(metrics.Ascent) * 0.7f;
         
         foreach (var word in text.Split(" "))
         {
@@ -245,6 +251,7 @@ public class TsplRender
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
         var content = command.Arguments[^1];
         var cellWidth = int.Parse(command.Arguments[3]);
+        var rotation = int.Parse(command.Arguments[5]);
         var size = Dots2Pixels(cellWidth * qrGridCells);
 
         var writer = new BarcodeWriter<SKBitmap>
@@ -259,7 +266,13 @@ public class TsplRender
             Renderer = new SKBitmapRenderer()
         };
         var qrBitmap = writer.Write(content);
+        canvas.Save();
+        
+        if (rotation > 0)
+            canvas.RotateDegrees(rotation, x, y);
+        
         canvas.DrawBitmap(qrBitmap, x, y);
+        canvas.Restore();
     }
     
     private void DrawBarcodeCommand(TsplDrawCommand command, SKCanvas canvas)
@@ -267,6 +280,7 @@ public class TsplRender
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
         var y = Dots2Pixels(int.Parse(command.Arguments[1]));
         var height = Dots2Pixels(int.Parse(command.Arguments[3]));
+        var rotation = int.Parse(command.Arguments[5]);
         var narrow = Dots2Pixels(int.Parse(command.Arguments[6]));
         var width = narrow * 100;
         var content = command.Arguments[^1];
@@ -292,15 +306,19 @@ public class TsplRender
             Renderer = new SKBitmapRenderer()
         };
         var barcodeBitMap = writer.Write(content);
+        canvas.Save();
+        
+        if (rotation > 0)
+            canvas.RotateDegrees(rotation, x, y);
+        
         canvas.DrawBitmap(barcodeBitMap, x, y);
+        canvas.Restore();
     }
     
     private void DrawBmpCommand(TsplDrawCommand command, SKCanvas canvas, Dictionary<string, string> images)
     {
         var filename = command.Arguments[2];
-        Debug.WriteLine(filename);
-        Debug.WriteLine(images[filename]);
-
+        
         if (!images.ContainsKey(filename)) return;
 
         var x = Dots2Pixels(int.Parse(command.Arguments[0]));
