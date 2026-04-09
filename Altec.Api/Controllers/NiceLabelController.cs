@@ -47,4 +47,21 @@ public class NiceLabelController : ControllerBase
         
         return Ok("Printing label...");
     }
+
+    [HttpPost("/automations/serialNumbersNewPrinters")]
+    public async Task<IActionResult> SerialNumbersNewPrinters(IFormFile excelFile)
+    {
+        if (excelFile == null) return BadRequest("Excel file must be present");
+
+        try
+        {
+            await _niceLabelClient.PrintSerialNumbers(excelFile);
+        }
+        catch
+        {
+            return BadRequest($"Error");
+        }
+        
+        return Ok("ok");
+    }
 }

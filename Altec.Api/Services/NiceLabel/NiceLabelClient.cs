@@ -44,4 +44,9 @@ public class NiceLabelClient : INiceLabelClient
         var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
     }
+
+    public Task PrintSerialNumbers(IFormFile excelFile)
+    {
+        throw new NotImplementedException();
+    }
 }
