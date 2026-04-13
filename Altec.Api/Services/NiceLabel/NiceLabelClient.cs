@@ -1,14 +1,20 @@
 ﻿using System.Net.Http.Headers;
+using System.Text.Json;
+using Altec.Api.Record.NiceLabel;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
 namespace Altec.Api.Services.NiceLabel;
 
 public class NiceLabelClient : INiceLabelClient
 {
     private readonly HttpClient _httpClient;
+    private readonly IConfiguration _config;
 
-    public NiceLabelClient(HttpClient httpClient)
+    public NiceLabelClient(HttpClient httpClient, IConfiguration config)
     {
         _httpClient = httpClient;
+        _config = config;
     }
 
     public async Task<IReadOnlyList<string>> GetVariables(IFormFile labelFile)
@@ -26,7 +32,7 @@ public class NiceLabelClient : INiceLabelClient
         return result!.AsReadOnly();
     }
 
-    public async Task PrintLabel(IFormFile labelFile, int quantity, string? printerIpAddress)
+    public async Task PrintLabel(IFormFile labelFile, int quantity, string? printerName)
     {
         var fileStream = labelFile.OpenReadStream();
         fileStream.Position = 0;
@@ -35,8 +41,8 @@ public class NiceLabelClient : INiceLabelClient
         var content = new MultipartFormDataContent();
         content.Add(streamContent, "label");
         content.Add(new StringContent(quantity.ToString()), "quantity");
-        if (printerIpAddress != null)
-            content.Add(new StringContent(printerIpAddress), "printerName");
+        if (printerName != null)
+            content.Add(new StringContent(printerName), "printerName");
         
         var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/print");
         request.Content = content;
@@ -45,8 +51,52 @@ public class NiceLabelClient : INiceLabelClient
         response.EnsureSuccessStatusCode();
     }
 
-    public Task PrintSerialNumbers(IFormFile excelFile)
+    public async Task PrintSerialNumbers(IFormFile excelFile, string? printerName)
     {
-        throw new NotImplementedException();
+        var stream = excelFile.OpenReadStream();
+        var workbook = new XLWorkbook(stream);
+        var sheet1 = workbook.Worksheets.Worksheet("sheet 1");
+        var serialNumbersList = new List<SerialNumberData>();
+        var labelFilePath = "./resource/serialNumbersNewPrinters.nsl";
+
+        foreach (var row in sheet1.Rows().Skip(1))
+        {
+            var sn = int.Parse(row.Cell(1).Value.ToString() ?? "0");
+            var barcode = row.Cell(2).Value.ToString() ?? "";
+            
+            serialNumbersList.Add(new SerialNumberData(sn, barcode));
+        }
+        
+        serialNumbersList.Sort();
+        
+        var fileStream = File.OpenRead(_config["LabelPaths:SerialNewPrintersLabel"]);
+
+        foreach (var serialNumberData in serialNumbersList)
+        {
+            var requestData = new MultipartFormDataContent();
+            var variables = new Dictionary<string, string>
+            {
+                ["sn"] = serialNumberData.SerialNumber.ToString(),
+                ["barcode"] = serialNumberData.Barcode
+            };
+
+            var variablesJson = JsonSerializer.Serialize(variables);
+            requestData.Add(new StringContent(variablesJson), "variables");
+            
+            fileStream.Position = 0;
+            StreamContent labelStream = new StreamContent(fileStream);
+            requestData.Add(labelStream, "label");
+            
+            if (printerName != null)
+                requestData.Add(new StringContent(printerName), "printerName");
+            
+            var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/printLabelVariables");
+            request.Content = requestData;
+        
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            
+            request.Content.Dispose();
+        }
     }
 }
