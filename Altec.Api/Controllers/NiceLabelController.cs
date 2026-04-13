@@ -48,7 +48,7 @@ public class NiceLabelController : ControllerBase
         }
     }
 
-    [HttpPost("/automations/serialNumbersNewPrinters")]
+    [HttpPost("automations/serialNumbersNewPrinters")]
     public async Task<IActionResult> SerialNumbersNewPrinters(IFormFile excelFile, [FromForm] string? printerName)
     {
         if (excelFile == null || excelFile.Length == 0) return BadRequest("Excel file must be present");

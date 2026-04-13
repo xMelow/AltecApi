@@ -55,19 +55,19 @@ public class NiceLabelClient : INiceLabelClient
     {
         var stream = excelFile.OpenReadStream();
         var workbook = new XLWorkbook(stream);
-        var sheet1 = workbook.Worksheets.Worksheet("sheet 1");
+        var sheet1 = workbook.Worksheets.Worksheet("blad1");
         var serialNumbersList = new List<SerialNumberData>();
         var labelFilePath = "./resource/serialNumbersNewPrinters.nsl";
 
         foreach (var row in sheet1.Rows().Skip(1))
         {
-            var sn = int.Parse(row.Cell(1).Value.ToString() ?? "0");
+            var sn = row.Cell(1).Value.ToString() ?? "";
             var barcode = row.Cell(2).Value.ToString() ?? "";
             
             serialNumbersList.Add(new SerialNumberData(sn, barcode));
         }
-        
-        serialNumbersList.Sort();
+
+        serialNumbersList = serialNumbersList.OrderBy(serialData => int.Parse(new string(serialData.SerialNumber.Where(char.IsDigit).ToArray()))).ToList();
         
         var fileStream = File.OpenRead(_config["LabelPaths:SerialNewPrintersLabel"]);
 
@@ -76,7 +76,7 @@ public class NiceLabelClient : INiceLabelClient
             var requestData = new MultipartFormDataContent();
             var variables = new Dictionary<string, string>
             {
-                ["sn"] = serialNumberData.SerialNumber.ToString(),
+                ["sn"] = serialNumberData.SerialNumber,
                 ["barcode"] = serialNumberData.Barcode
             };
 
