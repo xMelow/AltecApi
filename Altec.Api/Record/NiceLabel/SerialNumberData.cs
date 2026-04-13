@@ -2,5 +2,6 @@
 
 public record SerialNumberData(
     string SerialNumber,
-    string Barcode
+    string MacAddress,
+    string Type
 );

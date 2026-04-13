@@ -22,7 +22,7 @@ public class NiceLabelClient : INiceLabelClient
         var fileStream = labelFile.OpenReadStream();
         StreamContent streamContent = new StreamContent(fileStream);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/variables");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/nicelabel/variables");
         request.Content = streamContent;
         
         var response = await _httpClient.SendAsync(request);
@@ -44,7 +44,7 @@ public class NiceLabelClient : INiceLabelClient
         if (printerName != null)
             content.Add(new StringContent(printerName), "printerName");
         
-        var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/print");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/nicelabel/print");
         request.Content = content;
         
         var response = await _httpClient.SendAsync(request);
@@ -57,46 +57,43 @@ public class NiceLabelClient : INiceLabelClient
         var workbook = new XLWorkbook(stream);
         var sheet1 = workbook.Worksheets.Worksheet("blad1");
         var serialNumbersList = new List<SerialNumberData>();
+        var requestData = new MultipartFormDataContent();
+
         var labelFilePath = "./resource/serialNumbersNewPrinters.nsl";
 
         foreach (var row in sheet1.Rows().Skip(1))
         {
             var sn = row.Cell(1).Value.ToString() ?? "";
-            var barcode = row.Cell(2).Value.ToString() ?? "";
+            var mac = row.Cell(2).Value.ToString() ?? "";
+            var type = "ATP-300 Pro NL";
             
-            serialNumbersList.Add(new SerialNumberData(sn, barcode));
+            serialNumbersList.Add(new SerialNumberData(sn, mac, type));
         }
 
         serialNumbersList = serialNumbersList.OrderBy(serialData => int.Parse(new string(serialData.SerialNumber.Where(char.IsDigit).ToArray()))).ToList();
         
         var fileStream = File.OpenRead(_config["LabelPaths:SerialNewPrintersLabel"]);
-
-        foreach (var serialNumberData in serialNumbersList)
-        {
-            var requestData = new MultipartFormDataContent();
-            var variables = new Dictionary<string, string>
-            {
-                ["sn"] = serialNumberData.SerialNumber,
-                ["barcode"] = serialNumberData.Barcode
-            };
-
-            var variablesJson = JsonSerializer.Serialize(variables);
-            requestData.Add(new StringContent(variablesJson), "variables");
-            
-            fileStream.Position = 0;
-            StreamContent labelStream = new StreamContent(fileStream);
-            requestData.Add(labelStream, "label");
-            
-            if (printerName != null)
-                requestData.Add(new StringContent(printerName), "printerName");
-            
-            var request = new HttpRequestMessage(HttpMethod.Post, "/nicelabel/printLabelVariables");
-            request.Content = requestData;
         
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+        var allVariables = serialNumbersList.Select(s => new Dictionary<string, string> {
+            ["sn"] = s.SerialNumber,
+            ["mac"] = s.MacAddress,
+            ["type"] = s.Type
+        }).ToList();
+        
+        var json = JsonSerializer.Serialize(allVariables);
+        requestData.Add(new StringContent(json), "variables");
+        
+        fileStream.Position = 0;
+        StreamContent labelStream = new StreamContent(fileStream);
+        requestData.Add(labelStream, "label");
             
-            request.Content.Dispose();
-        }
+        if (printerName != null)
+            requestData.Add(new StringContent(printerName), "printerName");
+            
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/nicelabel/printLabelVariables");
+        request.Content = requestData;
+        
+        var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
     }
 }
