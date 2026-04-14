@@ -53,12 +53,22 @@ public class NiceLabelClient : INiceLabelClient
 
     public async Task PrintSerialNumbers(IFormFile excelFile, string? printerName)
     {
+        var excelData = ReadExcelData(excelFile);
+        var requestData = BuildPrintSerialRequest(excelData, printerName);
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/nicelabel/printLabelVariables");
+        request.Content = requestData;
+        
+        var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+    }
+
+    private List<SerialNumberData> ReadExcelData(IFormFile excelFile)
+    {
         var stream = excelFile.OpenReadStream();
         var workbook = new XLWorkbook(stream);
         var sheet1 = workbook.Worksheets.Worksheet("blad1");
         var serialNumbersList = new List<SerialNumberData>();
-        var requestData = new MultipartFormDataContent();
-        
+
         foreach (var row in sheet1.Rows().Skip(1))
         {
             var sn = row.Cell(1).Value.ToString() ?? "";
@@ -67,9 +77,13 @@ public class NiceLabelClient : INiceLabelClient
             
             serialNumbersList.Add(new SerialNumberData(sn, mac, type));
         }
-
-        serialNumbersList = serialNumbersList.OrderBy(serialData => int.Parse(new string(serialData.SerialNumber.Where(char.IsDigit).ToArray()))).ToList();
         
+        return serialNumbersList.OrderBy(serialData => int.Parse(new string(serialData.SerialNumber.Where(char.IsDigit).ToArray()))).ToList();
+    }
+
+    private MultipartFormDataContent BuildPrintSerialRequest(List<SerialNumberData> serialNumbersList, string? printerName)
+    {
+        var requestData = new MultipartFormDataContent();
         var fileStream = File.OpenRead(_config["LabelPaths:SerialNewPrintersLabel"]);
         
         var allVariables = serialNumbersList.Select(s => new Dictionary<string, string> {
@@ -81,17 +95,12 @@ public class NiceLabelClient : INiceLabelClient
         var json = JsonSerializer.Serialize(allVariables);
         requestData.Add(new StringContent(json), "variables");
         
-        fileStream.Position = 0;
         StreamContent labelStream = new StreamContent(fileStream);
         requestData.Add(labelStream, "label");
             
         if (printerName != null)
             requestData.Add(new StringContent(printerName), "printerName");
-            
-        var request = new HttpRequestMessage(HttpMethod.Post, "/api/nicelabel/printLabelVariables");
-        request.Content = requestData;
         
-        var response = await _httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+        return requestData;
     }
 }
