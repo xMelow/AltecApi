@@ -58,9 +58,7 @@ public class NiceLabelClient : INiceLabelClient
         var sheet1 = workbook.Worksheets.Worksheet("blad1");
         var serialNumbersList = new List<SerialNumberData>();
         var requestData = new MultipartFormDataContent();
-
-        var labelFilePath = "./resource/serialNumbersNewPrinters.nsl";
-
+        
         foreach (var row in sheet1.Rows().Skip(1))
         {
             var sn = row.Cell(1).Value.ToString() ?? "";
