@@ -48,14 +48,29 @@ public class NiceLabelController : ControllerBase
         }
     }
 
+    [HttpPost("labelPreview")]
+    public async Task<IActionResult> LabelPreview(IFormFile label)
+    {
+        try
+        {
+            await _niceLabelClient.GetLabelPreview(label);
+            return Ok("Label preview");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error creating label preview : {ex.Message}" );
+        }
+    }
+
     [HttpPost("automations/serialNumbersNewPrinters")]
-    public async Task<IActionResult> SerialNumbersNewPrinters(IFormFile excelFile, [FromForm] string? printerName)
+    public async Task<IActionResult> SerialNumbersNewPrinters(IFormFile excelFile, [FromForm] string printerType, [FromForm] string? printerName)
     {
         if (excelFile == null || excelFile.Length == 0) return BadRequest("Excel file must be present");
+        if (printerType == null) return BadRequest("Printer Type must be present");
 
         try
         {
-            await _niceLabelClient.PrintSerialNumbers(excelFile, printerName);
+            await _niceLabelClient.PrintSerialNumbers(excelFile, printerType, printerName);
             return Ok();
         }
         catch (Exception ex)

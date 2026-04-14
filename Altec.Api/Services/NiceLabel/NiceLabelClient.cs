@@ -51,9 +51,14 @@ public class NiceLabelClient : INiceLabelClient
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task PrintSerialNumbers(IFormFile excelFile, string? printerName)
+    public Task GetLabelPreview(IFormFile labelFile)
     {
-        var excelData = ReadExcelData(excelFile);
+        throw new NotImplementedException();
+    }
+
+    public async Task PrintSerialNumbers(IFormFile excelFile, string printerType, string? printerName)
+    {
+        var excelData = ReadExcelData(excelFile, printerType);
         var requestData = BuildPrintSerialRequest(excelData, printerName);
         var request = new HttpRequestMessage(HttpMethod.Post, "/api/nicelabel/printLabelVariables");
         request.Content = requestData;
@@ -62,7 +67,7 @@ public class NiceLabelClient : INiceLabelClient
         response.EnsureSuccessStatusCode();
     }
 
-    private List<SerialNumberData> ReadExcelData(IFormFile excelFile)
+    private List<SerialNumberData> ReadExcelData(IFormFile excelFile, string printerType)
     {
         var stream = excelFile.OpenReadStream();
         var workbook = new XLWorkbook(stream);
@@ -73,7 +78,7 @@ public class NiceLabelClient : INiceLabelClient
         {
             var sn = row.Cell(1).Value.ToString() ?? "";
             var mac = row.Cell(2).Value.ToString() ?? "";
-            var type = "ATP-300 Pro NL";
+            var type = printerType;
             
             serialNumbersList.Add(new SerialNumberData(sn, mac, type));
         }
