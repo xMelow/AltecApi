@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Altec.Api.Record.NiceLabel;
 using Altec.Api.Services.NiceLabel;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,12 +40,27 @@ public class NiceLabelController : ControllerBase
         try
         {
             await _niceLabelClient.PrintLabel(label, quantity, printerName);
+            return Ok("Printing label...");
         }
         catch (Exception ex)
         {
             return BadRequest($"Error printing label : {ex.Message}" );
         }
-        
-        return Ok("Printing label...");
+    }
+
+    [HttpPost("automations/serialNumbersNewPrinters")]
+    public async Task<IActionResult> SerialNumbersNewPrinters(IFormFile excelFile, [FromForm] string? printerName)
+    {
+        if (excelFile == null || excelFile.Length == 0) return BadRequest("Excel file must be present");
+
+        try
+        {
+            await _niceLabelClient.PrintSerialNumbers(excelFile, printerName);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error: {ex.Message}");
+        }
     }
 }
