@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using Altec.Api.Record.NiceLabel;
-using Altec.Api.Services.NiceLabel;
+﻿using Altec.Api.Services.NiceLabel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Altec.Api.Controllers;
@@ -48,19 +46,18 @@ public class NiceLabelController : ControllerBase
         }
     }
 
-    [HttpPost("automations/serialNumbersNewPrinters")]
-    public async Task<IActionResult> SerialNumbersNewPrinters(IFormFile excelFile, [FromForm] string? printerName)
+    [HttpPost("labelPreview")]
+    public async Task<IActionResult> LabelPreview(IFormFile label)
     {
-        if (excelFile == null || excelFile.Length == 0) return BadRequest("Excel file must be present");
-
         try
         {
-            await _niceLabelClient.PrintSerialNumbers(excelFile, printerName);
-            return Ok();
+            await _niceLabelClient.GetLabelPreview(label);
+            return Ok("Label preview");
         }
         catch (Exception ex)
         {
-            return BadRequest($"Error: {ex.Message}");
+            return BadRequest($"Error creating label preview : {ex.Message}" );
         }
     }
+
 }

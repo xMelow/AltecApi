@@ -63,7 +63,8 @@ public class PrinterDiscovery
                 try
                 {
                     var printerInfo = await GetPrinterInfo(ip);
-                    return new Printer(printerInfo.printerDnsName, ip.ToString(), printerInfo.printerModelName, PrinterPort);
+                    var shortDnsName = printerInfo.printerDnsName.Split(".")[0];
+                    return new Printer(printerInfo.printerDnsName, shortDnsName, ip.ToString(), printerInfo.printerModelName, PrinterPort);
                 }
                 catch
                 {
@@ -71,7 +72,7 @@ public class PrinterDiscovery
                 }
             });
         var foundPrinters = await Task.WhenAll(printerTask);
-        return foundPrinters.Where(p => p != null && p.model != "Unknown").ToList();
+        return foundPrinters.Where(p => p != null && p.PrinterModel != "Unknown").ToList();
     }
 
     private (IPAddress baseIp, int prefixLength) ParseSubnet(string subnet)
@@ -106,6 +107,7 @@ public class PrinterDiscovery
     {
         var dnsTask = GetPrinterDnsName(ip);
         var modelTask = GetPrinterModelName(ip);
+        
         await Task.WhenAll(dnsTask, modelTask);
         return (await dnsTask, await modelTask);
     }
@@ -119,11 +121,12 @@ public class PrinterDiscovery
             var completed = await Task.WhenAny(dnsTask, timeoutTask);
             if (completed == dnsTask)
                 return (await dnsTask).HostName;
-            return ip.ToString();
+            
+            return "No name found";
         }
         catch
         {
-            return ip.ToString();
+            return "No name found";
         }
     }
 
