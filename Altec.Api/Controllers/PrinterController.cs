@@ -1,5 +1,4 @@
-﻿using Altec.Api.Interface;
-using Altec.Api.Record.Printers;
+﻿using Altec.Api.Record.Printers;
 using Altec.Api.Services.Printers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,5 +20,19 @@ public class PrinterController : ControllerBase
     {
         var printers = await _printerService.GetPrinters(subnets);
         return Ok(new PrinterResponse(printers));
+    }
+    
+    [HttpGet("{ipAddress}/settings")]
+    public async Task<IActionResult> GetPrinterSettings(string ipAddress)
+    {
+        var info = await _printerService.GetPrinterInfo(ipAddress);
+        return Ok(info);
+    }
+
+    [HttpPost("{ipAddress}/command")]
+    public async Task<IActionResult> SendCommand(string ipAddress, [FromBody] PrinterCommandRequest request)
+    {
+        var response = await _printerService.SendCommand(ipAddress, request.Command);
+        return Ok(new PrinterCommandResponse(response));
     }
 }
