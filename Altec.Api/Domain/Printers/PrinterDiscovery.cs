@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using Altec.Api.Record.Printers;
@@ -63,9 +64,10 @@ public class PrinterDiscovery
             {
                 try
                 {
+                    if (!await IsTscPrinter(ip))
+                        return null;
                     var printerInfo = await GetPrinterInfo(ip);
-                    var shortDnsName = printerInfo.printerDnsName.Split(".")[0];
-                    return new Printer(printerInfo.printerDnsName, shortDnsName, ip.ToString(), printerInfo.printerModelName, PrinterPort);
+                    return new Printer(printerInfo.printerDnsName, ip.ToString(), printerInfo.printerModelName, PrinterPort);
                 }
                 catch
                 {
@@ -74,6 +76,46 @@ public class PrinterDiscovery
             });
         var foundPrinters = await Task.WhenAll(printerTask);
         return foundPrinters.Where(p => p != null && p.PrinterModel != "Unknown").ToList();
+    }
+
+    private async Task<bool> IsTscPrinter(IPAddress ip)
+    {
+        try
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromMilliseconds(500) };
+            var response = await http.GetStringAsync($"http://{ip}/");
+            // Got a web response — only TSC if it says so, otherwise it's a non-TSC printer
+            return response.Contains("TSC", StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            // No web interface — fall back to ~!T: TSC printers reply over TCP, A4 printers don't
+            return await HasTscTcpResponse(ip);
+        }
+    }
+
+    private async Task<bool> HasTscTcpResponse(IPAddress ip)
+    {
+        try
+        {
+            using var client = new TcpClient();
+            await client.ConnectAsync(ip, PrinterPort);
+            var stream = client.GetStream();
+            await stream.WriteAsync(Encoding.ASCII.GetBytes("~!T\r\n"));
+            await Task.Delay(200);
+
+            var buffer = new byte[1024];
+            var readTask = stream.ReadAsync(buffer, 0, buffer.Length);
+            var completed = await Task.WhenAny(readTask, Task.Delay(400));
+            if (completed != readTask) return false;
+
+            var bytesRead = await readTask;
+            return bytesRead > 0;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private (IPAddress baseIp, int prefixLength) ParseSubnet(string subnet)
@@ -106,52 +148,25 @@ public class PrinterDiscovery
 
     private async Task<(string printerDnsName, string printerModelName)> GetPrinterInfo(IPAddress ip)
     {
-        var dnsTask = GetPrinterDnsName(ip);
-        var modelTask = GetPrinterModelName(ip);
-        
-        await Task.WhenAll(dnsTask, modelTask);
-        return (await dnsTask, await modelTask);
-    }
+        var commandTask = SendPrinterCommand(ip, string.Join("\r\n",
+            "OUT \"NAME=\";GETSETTING$(\"CONFIG\",\"NET\",\"NAME\")",
+            "OUT \"MODEL=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"MODEL\")",
+            "END"
+        ));
+        var timeoutTask = Task.Delay(1500);
+        var completed = await Task.WhenAny(commandTask, timeoutTask);
+        if (completed != commandTask)
+            return ("Not found", "Unknown");
 
-    private async Task<string> GetPrinterDnsName(IPAddress ip)
-    {
-        try
-        {
-            var dnsTask = Dns.GetHostEntryAsync(ip);
-            var timeoutTask = Task.Delay(100);
-            var completed = await Task.WhenAny(dnsTask, timeoutTask);
-            if (completed == dnsTask)
-                return (await dnsTask).HostName;
-            
-            return "Not found";
-        }
-        catch
-        {
-            return "Not found";
-        }
-    }
+        var response = await commandTask;
+        var settings = response
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(l => l.Trim())
+            .Where(l => l.Contains('='))
+            .Select(l => l.Split('=', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1].Trim(), StringComparer.OrdinalIgnoreCase);
 
-    private async Task<string> GetPrinterModelName(IPAddress ip)
-    {
-        using var client = new TcpClient();
-        await client.ConnectAsync(ip, PrinterPort);
-        var stream = client.GetStream();
-        byte[] command = Encoding.ASCII.GetBytes("~!T\r\n");
-        await stream.WriteAsync(command, 0, command.Length);
-        
-        await Task.Delay(200);
-        
-        byte[] buffer = new byte[1024];
-        var readTask = stream.ReadAsync(buffer, 0, buffer.Length);
-        var timeoutTask = Task.Delay(400);
-        var completed = await Task.WhenAny(readTask, timeoutTask);
-    
-        if (completed == readTask)
-        {
-            var bytesRead = await readTask;
-            return Encoding.ASCII.GetString(buffer, 0, bytesRead);
-        }
-        return "Unknown";
+        return (settings.GetValueOrDefault("NAME", "Not found"), settings.GetValueOrDefault("MODEL", "Unknown"));
     }
 
     public async Task<PrinterInfo> GetPrinterSettings(IPAddress ip)
@@ -183,7 +198,8 @@ public class PrinterDiscovery
                 "OUT \"SPEED=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SPEED\")",
                 "OUT \"COUNTRY CODE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"COUNTRY CODE\")",
                 "OUT \"CODEPAGE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"CODEPAGE\")",
-                "OUT \"GAP OFFSET=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP OFFSET\")"
+                "OUT \"GAP OFFSET=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP OFFSET\")",
+                "END"
         );
         var response = await SendPrinterCommand(ip, program);
         
@@ -208,7 +224,7 @@ public class PrinterDiscovery
 
         var gapParts = Get("GAP SIZE").Split(',');
         var gapSize = ParseDimensionDots(gapParts[0], dpi);
-        var gapSizeOffset = gapParts.Length > 1 ? ParseDimensionDots(gapParts[1], dpi) : "0mm";
+        var gapSizeOffset = gapParts.Length > 1 ? ParseDimensionDots(gapParts[1], dpi) : "0 mm";
 
         return new PrinterInfo(
             Dpi: dpi,
