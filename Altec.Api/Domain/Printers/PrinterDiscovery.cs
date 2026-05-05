@@ -161,34 +161,27 @@ public class PrinterDiscovery
                 "OUT \"MODEL=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"MODEL\")",
                 "OUT \"SERIAL=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"SERIAL\")",
                 "OUT \"VERSION=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"VERSION\")",
-                "OUT \"PRINT QUALITY=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"PRINTQUALITY\")",
                 "OUT \"MILAGE=\";GETSETTING$(\"SYSTEM\",\"RECORD\",\"MILAGE\")",
                 "OUT \"LABEL COUNTER=\";GETSETTING$(\"SYSTEM\",\"RECORD\",\"LABEL COUNTER\")",
-                "OUT \"YEAR=\";GETSETTING$(\"SYSTEM\",\"RTC\",\"YEAR\")",
-                "OUT \"MONTH=\";GETSETTING$(\"SYSTEM\",\"RTC\",\"MONTH\")",
-                "OUT \"DATE=\";GETSETTING$(\"SYSTEM\",\"RTC\",\"DATE\")",
                 
                 "OUT \"MAC ADDRESS NET=\";GETSETTING$(\"CONFIG\",\"NET\",\"MAC ADDRESS\")",
                 "OUT \"IP ADDRESS NET=\";GETSETTING$(\"CONFIG\",\"NET\",\"IP ADDRESS\")",
                 "OUT \"NAME=\";GETSETTING$(\"CONFIG\",\"NET\",\"NAME\")",
-                "OUT \"PRIMARY DNS=\";GETSETTING$(\"CONFIG\",\"NET\",\"PRIMARY DNS\")",
-                "OUT \"MAC ADDRESS WLAN=\";GETSETTING$(\"CONFIG\",\"WLAN\",\"MAC ADDRESS\")",
-                "OUT \"IP ADDRESS WLAN=\";GETSETTING$(\"CONFIG\",\"WLAN\",\"IP ADDRESS\")",
                 
                 "OUT \"SENSOR TYPE=\";GETSETTING$(\"CONFIG\",\"SENSOR\",\"SENSOR TYPE\")",
                 
                 "OUT \"DENSITY=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"DENSITY\")", 
-                "OUT \"PAPER SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"PAPER SIZE\")", 
+                "OUT \"PAPER SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"PAPER SIZE\")",
+                "OUT \"PAPER WIDTH=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"PAPER WIDTH\")",
                 "OUT \"GAP SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP SIZE\")",
                 "OUT \"BLINE SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"BLINE SIZE\")",
                 "OUT \"DIRECTION=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"DIRECTION\")",
                 "OUT \"RIBBON=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"RIBBON\")",
-                "OUT \"PAPER WIDTH=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"PAPER WIDTH\")",
                 "OUT \"OFFSET=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"OFFSET\")",
                 "OUT \"SHIFT X=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SHIFT X\")",
                 "OUT \"SHIFT Y=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SHIFT Y\")",
                 "OUT \"SPEED=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SPEED\")",
-                "OUT \"COUNTRY=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"COUNTRY\")",
+                "OUT \"COUNTRY CODE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"COUNTRY CODE\")",
                 "OUT \"CODEPAGE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"CODEPAGE\")",
                 "OUT \"GAP OFFSET=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP OFFSET\")"
         );
@@ -207,52 +200,55 @@ public class PrinterDiscovery
             .ToDictionary(parts => parts[0], parts => parts[1].Trim(), StringComparer.OrdinalIgnoreCase);
 
         string Get(string key) => settings.GetValueOrDefault(key, "");
+        
+        var dpi = ParseInt(Get("DPI"));
 
-        var (paperWidth, paperHeight) = ParseDimension(Get("PAPER SIZE"));
-        var (gapSize, gapSizeOffset) = ParseDimension(Get("GAP SIZE"));
+        var labelWidth = ParseDimensionDots(Get("PAPER WIDTH"), dpi);
+        var labelHeight = ParseDimensionDots(Get("PAPER SIZE"), dpi);
+
+        var gapParts = Get("GAP SIZE").Split(',');
+        var gapSize = ParseDimensionDots(gapParts[0], dpi);
+        var gapSizeOffset = gapParts.Length > 1 ? ParseDimensionDots(gapParts[1], dpi) : "0mm";
 
         return new PrinterInfo(
-            Dpi: ParseInt(Get("DPI")),
+            Dpi: dpi,
             Model: Get("MODEL"),
             Serial: Get("SERIAL"),
             Version: Get("VERSION"),
-            PrintQuality: Get("PRINT QUALITY"),
-            Mileage: ParseInt(Get("MILAGE")),
+            Mileage: DotsToM(Get("MILAGE"), dpi),
             LabelCounter: ParseInt(Get("LABEL COUNTER")),
-            Year: ParseInt(Get("YEAR")),
-            Month: ParseInt(Get("MONTH")),
-            Date: ParseInt(Get("DATE")),
             MacAddressNet: Get("MAC ADDRESS NET"),
             IpAddressNet: Get("IP ADDRESS NET"),
             NetworkName: Get("NAME"),
-            PrimaryDns: Get("PRIMARY DNS"),
-            MacAddressWlan: Get("MAC ADDRESS WLAN"),
-            IpAddressWlan: Get("IP ADDRESS WLAN"),
             SensorType: Get("SENSOR TYPE"),
             Speed: ParseInt(Get("SPEED")),
             Density: ParseInt(Get("DENSITY")),
-            PaperWidth: paperWidth,
-            PaperHeight: paperHeight,
+            LabelWidth: labelWidth,
+            LabelHeight: labelHeight,
             GapSize: gapSize,
             GapSizeOffset: gapSizeOffset,
             BlineSize: ParseMm(Get("BLINE SIZE")),
             Direction: Get("DIRECTION"),
             Ribbon: Get("RIBBON"),
-            PaperRollWidth: ParseMm(Get("PAPER WIDTH")),
             Offset: ParseInt(Get("OFFSET")),
             ShiftX: ParseInt(Get("SHIFT X")),
             ShiftY: ParseInt(Get("SHIFT Y")),
-            CountryCode: Get("COUNTRY"),
+            CountryCode: Get("COUNTRY CODE"),
             CodePage: Get("CODEPAGE"),
             GapOffset: ParseInt(Get("GAP OFFSET"))
         );
     }
 
-    private (int a, int b) ParseDimension(string value)
+    private string ParseDimensionDots(string value, int dpi)
     {
-        var parts = value.Split(',');
-        if (parts.Length < 2) return (0, 0);
-        return (ParseMm(parts[0]), ParseMm(parts[1]));
+        if (dpi == 0 || !int.TryParse(value.Trim(), out var d)) return "0 mm";
+        return $"{Math.Round(d * 25.4 / dpi, 2)} mm";
+    }
+
+    private string DotsToM(string dots, int dpi)
+    {
+        if (dpi == 0 || !int.TryParse(dots.Trim(), out var d)) return "0 m";
+        return $"{Math.Round(d * 25.4 / dpi / 1000.0, 2)} m";
     }
 
     private int ParseMm(string value)
