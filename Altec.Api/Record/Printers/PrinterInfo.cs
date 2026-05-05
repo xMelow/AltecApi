@@ -1,3 +1,37 @@
 ﻿namespace Altec.Api.Record.Printers;
 
-public record PrinterInfo(int Speed, int Density, int PaperWidth, int PaperHeight, string MediaSensor, int Gap, int GapOffset, string PostPrintAction, string Direction, int Offset, int ShiftX, int ShiftY, string Ribbon, string RibbonSensor, string CodePage, string CountryCode);
+public record PrinterInfo(
+    int Dpi,
+    string Model,
+    string Serial,
+    string Version,
+    string PrintQuality,
+    int Mileage,
+    int LabelCounter,
+    int Year,
+    int Month,
+    int Date,
+    string MacAddressNet,
+    string IpAddressNet,
+    string NetworkName,
+    string PrimaryDns,
+    string MacAddressWlan,
+    string IpAddressWlan,
+    string SensorType,
+    int Speed,
+    int Density,
+    int PaperWidth,
+    int PaperHeight,
+    int GapSize,
+    int GapSizeOffset,
+    int BlineSize,
+    string Direction,
+    string Ribbon,
+    int PaperRollWidth,
+    int Offset,
+    int ShiftX,
+    int ShiftY,
+    string CountryCode,
+    string CodePage,
+    int GapOffset
+);

@@ -157,19 +157,40 @@ public class PrinterDiscovery
     public async Task<PrinterInfo> GetPrinterSettings(IPAddress ip)
     {
         var program = string.Join("\r\n",
-            "OUT \"SPEED=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SPEED\")",
-            "OUT \"DENSITY=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"DENSITY\")",
-            "OUT \"SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SIZE\")",
-            "OUT \"GAP=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP\")",
-            "OUT \"DIRECTION=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"DIRECTION\")",
-            "OUT \"CODEPAGE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"CODEPAGE\")",
-            "OUT \"SENSOR=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SENSOR\")",
-            "OUT \"RIBBON=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"RIBBON\")",
-            "OUT \"RIBBONSENSOR=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"RIBBONSENSOR\")",
-            "OUT \"COUNTRY=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"COUNTRY\")",
-            "OUT \"SHIFT=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SHIFT\")",
-            "OUT \"REFERENCE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"REFERENCE\")",
-            "OUT \"POSTACTION=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"POSTACTION\")"
+                "OUT \"DPI=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"DPI\")",
+                "OUT \"MODEL=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"MODEL\")",
+                "OUT \"SERIAL=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"SERIAL\")",
+                "OUT \"VERSION=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"VERSION\")",
+                "OUT \"PRINT QUALITY=\";GETSETTING$(\"SYSTEM\",\"INFORMATION\",\"PRINTQUALITY\")",
+                "OUT \"MILAGE=\";GETSETTING$(\"SYSTEM\",\"RECORD\",\"MILAGE\")",
+                "OUT \"LABEL COUNTER=\";GETSETTING$(\"SYSTEM\",\"RECORD\",\"LABEL COUNTER\")",
+                "OUT \"YEAR=\";GETSETTING$(\"SYSTEM\",\"RTC\",\"YEAR\")",
+                "OUT \"MONTH=\";GETSETTING$(\"SYSTEM\",\"RTC\",\"MONTH\")",
+                "OUT \"DATE=\";GETSETTING$(\"SYSTEM\",\"RTC\",\"DATE\")",
+                
+                "OUT \"MAC ADDRESS NET=\";GETSETTING$(\"CONFIG\",\"NET\",\"MAC ADDRESS\")",
+                "OUT \"IP ADDRESS NET=\";GETSETTING$(\"CONFIG\",\"NET\",\"IP ADDRESS\")",
+                "OUT \"NAME=\";GETSETTING$(\"CONFIG\",\"NET\",\"NAME\")",
+                "OUT \"PRIMARY DNS=\";GETSETTING$(\"CONFIG\",\"NET\",\"PRIMARY DNS\")",
+                "OUT \"MAC ADDRESS WLAN=\";GETSETTING$(\"CONFIG\",\"WLAN\",\"MAC ADDRESS\")",
+                "OUT \"IP ADDRESS WLAN=\";GETSETTING$(\"CONFIG\",\"WLAN\",\"IP ADDRESS\")",
+                
+                "OUT \"SENSOR TYPE=\";GETSETTING$(\"CONFIG\",\"SENSOR\",\"SENSOR TYPE\")",
+                
+                "OUT \"DENSITY=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"DENSITY\")", 
+                "OUT \"PAPER SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"PAPER SIZE\")", 
+                "OUT \"GAP SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP SIZE\")",
+                "OUT \"BLINE SIZE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"BLINE SIZE\")",
+                "OUT \"DIRECTION=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"DIRECTION\")",
+                "OUT \"RIBBON=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"RIBBON\")",
+                "OUT \"PAPER WIDTH=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"PAPER WIDTH\")",
+                "OUT \"OFFSET=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"OFFSET\")",
+                "OUT \"SHIFT X=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SHIFT X\")",
+                "OUT \"SHIFT Y=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SHIFT Y\")",
+                "OUT \"SPEED=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"SPEED\")",
+                "OUT \"COUNTRY=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"COUNTRY\")",
+                "OUT \"CODEPAGE=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"CODEPAGE\")",
+                "OUT \"GAP OFFSET=\";GETSETTING$(\"CONFIG\",\"TSPL\",\"GAP OFFSET\")"
         );
         var response = await SendPrinterCommand(ip, program);
         
@@ -187,27 +208,43 @@ public class PrinterDiscovery
 
         string Get(string key) => settings.GetValueOrDefault(key, "");
 
-        var (width, height) = ParseDimension(Get("SIZE"));
-        var (gap, gapOffset) = ParseDimension(Get("GAP"));
-        var (shiftX, shiftY) = ParseCoordinates(Get("REFERENCE"));
+        var (paperWidth, paperHeight) = ParseDimension(Get("PAPER SIZE"));
+        var (gapSize, gapSizeOffset) = ParseDimension(Get("GAP SIZE"));
 
         return new PrinterInfo(
+            Dpi: ParseInt(Get("DPI")),
+            Model: Get("MODEL"),
+            Serial: Get("SERIAL"),
+            Version: Get("VERSION"),
+            PrintQuality: Get("PRINT QUALITY"),
+            Mileage: ParseInt(Get("MILAGE")),
+            LabelCounter: ParseInt(Get("LABEL COUNTER")),
+            Year: ParseInt(Get("YEAR")),
+            Month: ParseInt(Get("MONTH")),
+            Date: ParseInt(Get("DATE")),
+            MacAddressNet: Get("MAC ADDRESS NET"),
+            IpAddressNet: Get("IP ADDRESS NET"),
+            NetworkName: Get("NAME"),
+            PrimaryDns: Get("PRIMARY DNS"),
+            MacAddressWlan: Get("MAC ADDRESS WLAN"),
+            IpAddressWlan: Get("IP ADDRESS WLAN"),
+            SensorType: Get("SENSOR TYPE"),
             Speed: ParseInt(Get("SPEED")),
             Density: ParseInt(Get("DENSITY")),
-            PaperWidth: width,
-            PaperHeight: height,
-            MediaSensor: Get("SENSOR"),
-            Gap: gap,
-            GapOffset: gapOffset,
-            PostPrintAction: Get("POSTACTION"),
+            PaperWidth: paperWidth,
+            PaperHeight: paperHeight,
+            GapSize: gapSize,
+            GapSizeOffset: gapSizeOffset,
+            BlineSize: ParseMm(Get("BLINE SIZE")),
             Direction: Get("DIRECTION"),
-            Offset: ParseInt(Get("SHIFT")),
-            ShiftX: shiftX,
-            ShiftY: shiftY,
             Ribbon: Get("RIBBON"),
-            RibbonSensor: Get("RIBBONSENSOR"),
+            PaperRollWidth: ParseMm(Get("PAPER WIDTH")),
+            Offset: ParseInt(Get("OFFSET")),
+            ShiftX: ParseInt(Get("SHIFT X")),
+            ShiftY: ParseInt(Get("SHIFT Y")),
+            CountryCode: Get("COUNTRY"),
             CodePage: Get("CODEPAGE"),
-            CountryCode: Get("COUNTRY")
+            GapOffset: ParseInt(Get("GAP OFFSET"))
         );
     }
 
@@ -238,13 +275,6 @@ public class PrinterDiscovery
             return (int)raw;
         }
         return 0;
-    }
-
-    private (int x, int y) ParseCoordinates(string value)
-    {
-        var parts = value.Split(',');
-        if (parts.Length < 2) return (0, 0);
-        return (ParseInt(parts[0]), ParseInt(parts[1]));
     }
 
     private int ParseInt(string? value)
